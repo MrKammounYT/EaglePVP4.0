@@ -1,0 +1,5 @@
+name: pvp
+main: eaglemc.pvp.main
+version: 4.0
+commands:
+  pvp:
