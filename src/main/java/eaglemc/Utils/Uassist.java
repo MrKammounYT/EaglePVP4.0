@@ -6,17 +6,29 @@ import java.util.HashMap;
 
 public class Uassist {
 
-    private int totalDamage;
 
+
+    private int finaldamage;
     private final HashMap<Player,Double> damagers = new HashMap<>();
 
 
+    public void AddfinalDamage(int finaldamage){
+        this.finaldamage += finaldamage;
+    }
+
+
     public int getDamagePercentage(Player player){
-        return (int) (damagers.get(player) /totalDamage);
+        double data = damagers.get(player);
+        int value = (int)data;
+        return  (value*100)/finaldamage;
     }
 
     public void addDamagers(Player player,double damage){
-        if(damagers.containsKey(player) || damage == 0)return;
+        if(damage == 0)return;
+        if(damagers.containsKey(player) ){
+            damagers.put(player,damagers.get(player) + damage);
+            return;
+        }
         damagers.put(player,damage);
     }
 

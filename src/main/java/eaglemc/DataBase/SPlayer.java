@@ -1,5 +1,9 @@
 package eaglemc.DataBase;
 
+import eaglemc.pvp.main;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +24,7 @@ public class SPlayer {
 
     private void createStatsDB(){
         try {
-            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS  PLAYERS (NAME VARCHAR(100),UUID VARCHAR(100)," +
+            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS PLAYERS (NAME VARCHAR(100),UUID VARCHAR(100)," +
                     "DEATHS INT(100),POINTS INT(100),KILLS INT(100),COINS INT(100),EXP INT(100),LEVEL INT(100),PRIMARY KEY (UUID))");
             ps.executeUpdate();
             ps.close();
@@ -202,5 +206,92 @@ public class SPlayer {
         return experience;
     }
 
+
+    public void setKill(String uuid,int amount) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET KILLS = ? WHERE UUID = ?");
+            ps.setString( 2, uuid);
+            ps.setInt(1,amount);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setDeath(String uuid,int amount) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET DEATHS = ? WHERE UUID = ?");
+            ps.setString( 2, uuid);
+            ps.setInt(1,amount);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setExp(String uuid, int amount) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET EXP = ? WHERE UUID = ?");
+            ps.setInt(1, amount);
+            ps.setString(2, uuid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setPoints(String uuid, int amount) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET POINTS = ? WHERE UUID = ?");
+            ps.setInt(1, amount);
+            ps.setString(2, uuid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setCoins(String uuid, int amount) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET COINS = ? WHERE UUID = ?");
+            ps.setInt(1, amount);
+            ps.setString(2, uuid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setLevel(String uuid, int level) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET LEVEL = ? WHERE UUID = ?");
+            ps.setInt(1, level);
+            ps.setString(2, uuid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public String getTop(int id){
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT NAME,KILLS FROM PLAYERS ORDER BY KILLS DESC LIMIT "+id);
+            ResultSet rs = ps.executeQuery();
+            int i = 0;
+            while (rs.next()) {
+                if (++i != id)continue;
+                return rs.getString("NAME");
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

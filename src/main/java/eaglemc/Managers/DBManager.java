@@ -9,7 +9,6 @@ import java.sql.SQLException;
 
 public class DBManager {
 
-
     private Connection connection;
 
     private SPlayer sPlayer;

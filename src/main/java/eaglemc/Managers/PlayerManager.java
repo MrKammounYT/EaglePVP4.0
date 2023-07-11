@@ -3,8 +3,15 @@ package eaglemc.Managers;
 import eaglemc.DataBase.SPlayer;
 import eaglemc.GameManager.GameManager;
 import eaglemc.Utils.Kit;
+import eaglemc.Utils.LocationAPI;
+import eaglemc.Utils.ScoreBoard;
 import eaglemc.Utils.UPlayer;
+import eaglemc.pvp.main;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +20,7 @@ import java.util.UUID;
 public class PlayerManager {
 
 
-    final HashMap<UUID, UPlayer> players = new HashMap<UUID, UPlayer>();
+    private final HashMap<UUID, UPlayer> players = new HashMap<UUID, UPlayer>();
 
     private final DBManager dbManager;
 
@@ -31,23 +38,51 @@ public class PlayerManager {
 
     public void createPlayer(Player p){
         if(!isPlayer(p)){
-            Kit kit = null;
-            for(Map.Entry<String, Kit> kits : gm.getKitManager().getKits().entrySet()){
-                if(!p.hasPermission(kits.getValue().getPermission()))continue;
-                kit = kits.getValue();
-            }
+            sPlayer.addPlayer(p.getDisplayName(),p.getUniqueId());
             String uuid = p.getUniqueId().toString();
-            players.put(p.getUniqueId(),new UPlayer(kit,sPlayer.getKills(uuid),sPlayer.getDeaths(uuid),
+            players.put(p.getUniqueId(),new UPlayer(p,sPlayer.getKills(uuid),sPlayer.getDeaths(uuid),
                     sPlayer.getPoints(uuid),sPlayer.getCoins(uuid),sPlayer.getExperience(uuid),sPlayer.getLevel(uuid)));
-
-
+        }
+        try {
+            for(Map.Entry<String,Kit> kits: gm.getKitManager().getKits().entrySet()){
+                    if(kits.getValue().getPermission().equals("noperm")){
+                        getPlayer(p).setKit(kits.getValue());
+                        break;
+                    }
+                    if(p.hasPermission(kits.getValue().getPermission())){
+                        getPlayer(p).setKit(kits.getValue());
+                        break;
+                    }
+            }
+        }catch (Exception s){
+            Bukkit.getConsoleSender().sendMessage("§cPlease Check Your kits.yml");
+            Bukkit.getConsoleSender().sendMessage("§cAnd Setup all Necessary Kits (eagle/diamond/gold/default)!");
         }
 
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+               p.teleport(LocationAPI.getLocation("spawn"));
+               p.setGameMode(GameMode.SURVIVAL);
+               p.setHealth(20);
+               p.setFoodLevel(20);
+               ScoreBoard.create(getPlayer(p));
+               for(PotionEffect effects : p.getActivePotionEffects()){
+                   p.removePotionEffect(effects.getType());
+               }
+               getPlayer(p).wearKit(p);
+            }
+        }.runTaskLater(main.getInstance(),10);
 
 
-        //sql
+
 
     }
+
+    public HashMap<UUID, UPlayer> getPlayers() {
+        return players;
+    }
+
     public UPlayer getPlayer(Player p){
         return players.get(p.getUniqueId());
     }

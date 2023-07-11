@@ -21,6 +21,7 @@ public class Assist implements Listener {
             Player p = (Player)e.getEntity();
             Player damager = (Player)e.getDamager();
             gm.getPlayerManager().getPlayer(p).getUassist().addDamagers(damager,e.getFinalDamage());
+            gm.getPlayerManager().getPlayer(p).getUassist().AddfinalDamage((int)e.getFinalDamage());
         }
 
     }

@@ -1,3 +1,6 @@
+Prefix: '&e&lPvP &7-> '
+Shop-Npc-Name: '&a&lSHOP'
+Quest-Npc-Name: '&e&lQUESTS'
 MySQL:
   JDBC: ''
   Address: ''

@@ -1,11 +1,15 @@
 package eaglemc.Utils;
 
 import eaglemc.pvp.main;
+import fr.mrmicky.fastboard.FastBoard;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class UPlayer {
 
 
+
+    private FastBoard ScoreBoard;
     private int kills;
     private int deaths;
 
@@ -13,6 +17,10 @@ public class UPlayer {
 
     private boolean build;
 
+
+    private int KillStreaks;
+
+    private Location deathLocation;
     private int exp;
     private int level;
     private int coins;
@@ -20,18 +28,53 @@ public class UPlayer {
 
     private Kit kit;
 
+    private Player p;
+
+    private boolean Build;
 
 
-    public UPlayer(Kit kit,int kills,int deaths,int points,int coins,int exp,int level){
+
+    public UPlayer(Player p,int kills,int deaths,int points,int coins,int exp,int level){
         this.kills = kills;
         this.deaths= deaths;
         this.points = points;
         this.coins = coins;
         this.exp = exp;
         this.level = level;
-        this.kit = kit;
+        this.p = p;
     }
 
+
+    public boolean isInBuild() {
+        return build;
+    }
+
+
+    public int getKillStreaks() {
+        return KillStreaks;
+    }
+
+    public void addKillStreak(){
+        KillStreaks++;
+    }
+    public void clearKillStreaks(){
+        KillStreaks = 0;
+    }
+    public void setBuilding(boolean build){
+        this.build = build;
+    }
+
+    public void setScoreBoard(FastBoard scoreBoard) {
+        ScoreBoard = scoreBoard;
+    }
+
+    public FastBoard getScoreBoard() {
+        return ScoreBoard;
+    }
+
+    public Player getPlayer() {
+        return p;
+    }
 
     public Uassist getUassist() {
         return uassist;
@@ -41,7 +84,15 @@ public class UPlayer {
         return kit;
     }
     public void setKit(Kit kit) {
-        kit = kit;
+        this.kit = kit;
+    }
+
+    public void setDeathLocation(Location deathLocation) {
+        this.deathLocation = deathLocation;
+    }
+
+    public Location getDeathLocation() {
+        return deathLocation;
     }
 
     public int getLevel() {
@@ -72,15 +123,17 @@ public class UPlayer {
         else return "&4&l&n";
     }
 
+    public int getXPToLevelUp(){
+        return getRequiredXP() - exp;
+    }
     public int getRequiredXP(){
-        int xplevel = (level *10)/3;
-        return xplevel - exp;
+        return ((level+1) *10)/3;
     }
     public void checkEXP(Player p){
-        if(getRequiredXP() <= 0){
-            exp = 0;
+        if(getRequiredXP() - exp <= 0){
+            exp = exp - getRequiredXP();
             level+=1;
-            Title.sendTitle(p, main.color("&f&lLEVEL UP!"),main.color("&7["+getLevelColor()+(level-1)+"&7]" +" &7-> " + getStringLevel()),40);
+            Title.sendTitle(p, main.color("&e&lLEVEL UP!"),main.color("&7["+getLevelColor()+(level-1)+"&7]" +" &7-> " + getStringLevel()),40);
         }
     }
     public int getPoints() {
@@ -136,11 +189,23 @@ public class UPlayer {
         this.deaths +=deaths;
     }
 
+    public void wearKit(Player p){
+        if(kit!= null){
+            kit.wear(p);
+        }
+    }
 
     public void removePoints(int points){
+        if(this.points <=0)return;
         this.points -= points;
     }
-    public boolean isInBuilding() {
-        return build;
+
+    public void setexp(Player p, int amount) {
+        exp = amount;
+        checkEXP(p);
+    }
+
+    public void setlevel(int amount) {
+        level = amount;
     }
 }
