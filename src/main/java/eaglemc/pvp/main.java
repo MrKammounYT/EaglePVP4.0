@@ -5,22 +5,21 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import eaglemc.Commands.admin;
-import eaglemc.Commands.user;
+import eaglemc.Commands.Admin;
+import eaglemc.Commands.User;
 import eaglemc.GameManager.GameManager;
 import eaglemc.Listeners.*;
 import com.comphenix.protocol.*;
-import net.minecraft.server.v1_8_R3.GameRules;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Difficulty;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import eaglemc.Managers.PlayerManager;
+import eaglemc.PerkEffect.*;
+import eaglemc.Quests.Quest;
+import eaglemc.Runnables.LeaderBoardUpdate;
+import eaglemc.Shop.*;
+import eaglemc.TrailsEffect.PlayEffect;
+import org.bukkit.*;
+import org.bukkit.entity.*;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.UUID;
 
 public class main extends JavaPlugin {
 
@@ -28,9 +27,10 @@ public class main extends JavaPlugin {
     private static main instance;
 
     private GameManager gameManager;
+    private PlayerManager playerManager;
 
     public static String Prefix;
-    private final String Version = "4.0 Alpha";
+    private final String Version = "4.0.1 Beta";
     private ProtocolManager protocolManager;
 
     @Override
@@ -40,23 +40,20 @@ public class main extends JavaPlugin {
         instance = this;
         Prefix =  color(getConfig().getString("Prefix"));
         gameManager = new GameManager(this);
+        playerManager = gameManager.getPlayerManager();
         getLogger().info("PvP "+ Version +" Has Been Enabled");
         getLogger().info("Coded By SrKammounYT");
         protocolManager = ProtocolLibrary.getProtocolManager();
         registerPacketListener();
 
-        Bukkit.getPluginManager().registerEvents(new Join(gameManager),this);
-        Bukkit.getPluginManager().registerEvents(new Death(gameManager),this);
-        Bukkit.getPluginManager().registerEvents(new Assist(gameManager),this);
-        Bukkit.getPluginManager().registerEvents(new Respawn(gameManager),this);
-        Bukkit.getPluginManager().registerEvents(new Chat(gameManager),this);
-        Bukkit.getPluginManager().registerEvents(new Shop(),this);
-        Bukkit.getPluginManager().registerEvents(new Options(gameManager.getPlayerManager()),this);
-        Bukkit.getPluginManager().registerEvents(new JumpPad(),this);
+        getCommand("pvp").setExecutor(new Admin(gameManager));
+        getCommand("stats").setExecutor(new User(gameManager));
+        getCommand("spawn").setExecutor(new User(gameManager));
+        try {
+            LoadPvP();
+        }catch (Exception e){
 
-        Weather();
-        getCommand("pvp").setExecutor(new admin(gameManager));
-        getCommand("stats").setExecutor(new user(gameManager));
+        }
         ReloadPlayers();
     }
 
@@ -70,10 +67,44 @@ public class main extends JavaPlugin {
         gameManager.SaveData();
     }
 
+    
+    private void LoadPvP() {
+        PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new Join(gameManager),this);
+        pm.registerEvents(new Death(gameManager),this);
+        pm.registerEvents(new Assist(gameManager),this);
+        pm.registerEvents(new Respawn(gameManager),this);
+        pm.registerEvents(new Chat(gameManager),this);
+        pm.registerEvents(new ShopOpenEvent(playerManager),this);
+        pm.registerEvents(new Quest(gameManager),this);
+        pm.registerEvents(new Options(playerManager),this);
+        pm.registerEvents(new JumpPad(),this);
+        pm.registerEvents(new MenusOpenEvent(gameManager),this);
+        pm.registerEvents(new PerkSelectionEvent(playerManager),this);
+        pm.registerEvents(new PerkPurchaseEvent(playerManager),this);
+        pm.registerEvents(new Grappler(playerManager),this);
+        pm.registerEvents(new Berserker(playerManager),this);
+        pm.registerEvents(new GoldenHead(playerManager),this);
+        pm.registerEvents(new Vampire(playerManager),this);
+        pm.registerEvents(new Quiver(playerManager),this);
+        pm.registerEvents(new TNT(playerManager),this);
+        pm.registerEvents(new TrailPurchaseEvent(playerManager),this);
+        pm.registerEvents(new TrailsSelectionEvent(playerManager),this);
+        pm.registerEvents(new PlayEffect(playerManager),this);
+        pm.registerEvents(new KitSelectionEvent(gameManager),this);
+        pm.registerEvents(new Flint(playerManager),this);
+        Weather();
+        LeaderBoardUpdate leaderBoardUpdate = new LeaderBoardUpdate(gameManager,getConfig());
+        leaderBoardUpdate.runTaskTimer(this,0,20);
+    }
 
-    public void ReloadPlayers(){
+
+
+
+
+    private void ReloadPlayers(){
         for(Player pls:Bukkit.getOnlinePlayers()){
-            gameManager.getPlayerManager().createPlayer(pls);
+            playerManager.createPlayer(pls);
         }
     }
     private void Weather() {
@@ -92,6 +123,8 @@ public class main extends JavaPlugin {
     public static main getInstance() {
         return instance;
     }
+
+
     public static String color(String phrase){
         return ChatColor.translateAlternateColorCodes('&',phrase);
     }

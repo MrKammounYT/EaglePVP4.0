@@ -1,13 +1,12 @@
 package eaglemc.DataBase;
 
-import eaglemc.pvp.main;
-import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class SPlayer {
@@ -24,7 +23,7 @@ public class SPlayer {
 
     private void createStatsDB(){
         try {
-            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS PLAYERS (NAME VARCHAR(100),UUID VARCHAR(100)," +
+            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS PVP (NAME VARCHAR(100),UUID VARCHAR(100),CUSTOMNAME VARCHAR(1000)," +
                     "DEATHS INT(100),POINTS INT(100),KILLS INT(100),COINS INT(100),EXP INT(100),LEVEL INT(100),PRIMARY KEY (UUID))");
             ps.executeUpdate();
             ps.close();
@@ -35,7 +34,7 @@ public class SPlayer {
     public void addPlayer(String name, UUID uuid){
         try {
             if(PlayerExists(uuid))return;
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO PLAYERS (NAME,UUID,LEVEL) VALUES (?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO PVP (NAME,UUID,LEVEL) VALUES (?,?,?)");
             ps.setString(1,name);
             ps.setString(2,uuid.toString());
             ps.setInt(3,1);
@@ -47,7 +46,7 @@ public class SPlayer {
     }
     public boolean PlayerExists(UUID uuid){
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM PLAYERS WHERE UUID =?");
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM PVP WHERE UUID =?");
             ps.setString(1,uuid.toString());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
@@ -67,7 +66,7 @@ public class SPlayer {
 
     public void addKill(String uuid) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET KILLS = KILLS + 1 WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET KILLS = KILLS + 1 WHERE UUID = ?");
             ps.setString( 1, uuid);
             ps.executeUpdate();
             ps.close();
@@ -78,7 +77,7 @@ public class SPlayer {
 
     public void addDeath(String uuid) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET DEATHS = DEATHS + 1 WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET DEATHS = DEATHS + 1 WHERE UUID = ?");
             ps.setString( 1, uuid);
             ps.executeUpdate();
             ps.close();
@@ -89,7 +88,7 @@ public class SPlayer {
 
     public void addCoins(String uuid, int amount) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET COINS = COINS + ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET COINS = COINS + ? WHERE UUID = ?");
             ps.setInt(1, amount);
             ps.setString(2, uuid);
             ps.executeUpdate();
@@ -101,7 +100,7 @@ public class SPlayer {
 
     public void addPoints(String uuid, int amount) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET POINTS = POINTS + ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET POINTS = POINTS + ? WHERE UUID = ?");
             ps.setInt(1, amount);
             ps.setString(2, uuid);
             ps.executeUpdate();
@@ -113,7 +112,7 @@ public class SPlayer {
     public int getKills(String uuid) {
         int kills = 0;
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT KILLS FROM PLAYERS WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT KILLS FROM PVP WHERE UUID = ?");
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -125,11 +124,25 @@ public class SPlayer {
         }
         return kills;
     }
-
+    public String  getCustomName(Player p){
+        String customName ="";
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT CUSTOMNAME FROM PVP WHERE UUID = ?");
+            ps.setString(1, p.getUniqueId().toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                customName = rs.getString("CUSTOMNAME");
+            }
+            ps.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return customName;
+    }
     public int getDeaths(String uuid) {
         int deaths = 0;
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT DEATHS FROM PLAYERS WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT DEATHS FROM PVP WHERE UUID = ?");
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -145,7 +158,7 @@ public class SPlayer {
     public int getCoins(String uuid) {
         int coins = 0;
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT COINS FROM PLAYERS WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT COINS FROM PVP WHERE UUID = ?");
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -161,7 +174,7 @@ public class SPlayer {
     public int getPoints(String uuid) {
         int points = 0;
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT POINTS FROM PLAYERS WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT POINTS FROM PVP WHERE UUID = ?");
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -178,7 +191,7 @@ public class SPlayer {
     public int getLevel(String uuid){
         int level = 1;
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT LEVEL FROM PLAYERS WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT LEVEL FROM PVP WHERE UUID = ?");
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -193,7 +206,7 @@ public class SPlayer {
     public int getExperience(String uuid) {
         int experience = 0;
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT EXP FROM PLAYERS WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT EXP FROM PVP WHERE UUID = ?");
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -209,7 +222,7 @@ public class SPlayer {
 
     public void setKill(String uuid,int amount) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET KILLS = ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET KILLS = ? WHERE UUID = ?");
             ps.setString( 2, uuid);
             ps.setInt(1,amount);
             ps.executeUpdate();
@@ -220,7 +233,7 @@ public class SPlayer {
     }
     public void setDeath(String uuid,int amount) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET DEATHS = ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET DEATHS = ? WHERE UUID = ?");
             ps.setString( 2, uuid);
             ps.setInt(1,amount);
             ps.executeUpdate();
@@ -231,7 +244,7 @@ public class SPlayer {
     }
     public void setExp(String uuid, int amount) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET EXP = ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET EXP = ? WHERE UUID = ?");
             ps.setInt(1, amount);
             ps.setString(2, uuid);
             ps.executeUpdate();
@@ -243,7 +256,7 @@ public class SPlayer {
 
     public void setPoints(String uuid, int amount) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET POINTS = ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET POINTS = ? WHERE UUID = ?");
             ps.setInt(1, amount);
             ps.setString(2, uuid);
             ps.executeUpdate();
@@ -255,7 +268,7 @@ public class SPlayer {
 
     public void setCoins(String uuid, int amount) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET COINS = ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET COINS = ? WHERE UUID = ?");
             ps.setInt(1, amount);
             ps.setString(2, uuid);
             ps.executeUpdate();
@@ -266,7 +279,7 @@ public class SPlayer {
     }
     public void setLevel(String uuid, int level) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE PLAYERS SET LEVEL = ? WHERE UUID = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET LEVEL = ? WHERE UUID = ?");
             ps.setInt(1, level);
             ps.setString(2, uuid);
             ps.executeUpdate();
@@ -275,23 +288,38 @@ public class SPlayer {
             e.printStackTrace();
         }
     }
-
-
-    public String getTop(int id){
+    public void setCustomName(UUID uuid,String name){
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT NAME,KILLS FROM PLAYERS ORDER BY KILLS DESC LIMIT "+id);
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET CUSTOMNAME = ? WHERE UUID = ?");
+            ps.setString(1,name);
+            ps.setString(2, uuid.toString());
+            ps.executeUpdate();
+            ps.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public DataContainer getTop(int id){
+        DataContainer PlayerData;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT NAME,POINTS,DEATHS,CUSTOMNAME FROM PVP ORDER BY POINTS DESC LIMIT "+id);
             ResultSet rs = ps.executeQuery();
             int i = 0;
             while (rs.next()) {
                 if (++i != id)continue;
-                return rs.getString("NAME");
+                PlayerData = new DataContainer(rs.getString("NAME"),rs.getInt("POINTS")
+                        ,rs.getInt("DEATHS"),rs.getString("CUSTOMNAME"));
+                return PlayerData;
             }
             rs.close();
             ps.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return new DataContainer("Chesthead",0,0,"&fNone");
     }
 
 }

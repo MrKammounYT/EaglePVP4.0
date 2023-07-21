@@ -4,9 +4,11 @@ import com.comphenix.protocol.*;
 import com.comphenix.protocol.events.PacketAdapter;
 import eaglemc.pvp.main;
 import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,7 +30,8 @@ public class JumpPad implements Listener {
     @EventHandler
     public void JumpPadLaunch(PlayerMoveEvent e){
 
-        if (e.getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType() == Material.GOLD_BLOCK) {
+        if (e.getTo().getBlock().getType() == Material.GOLD_PLATE) {
+            if(e.getPlayer().getGameMode() != GameMode.SURVIVAL)return;
             launchEnderPearl(e.getPlayer());
         }
     }
@@ -62,12 +65,13 @@ public class JumpPad implements Listener {
         player.playSound(player.getLocation(), Sound.ENDERDRAGON_WINGS,5.0f,3.0f);
         Location location = player.getLocation();
         Vector direction = player.getEyeLocation().getDirection();
-        Vector velocity = new Vector(direction.getX(), 1, direction.getZ()).normalize().multiply(1);
+        Vector velocity = new Vector(direction.getX(), 0.5, direction.getZ());
         EnderPearl enderPearl = player.launchProjectile(EnderPearl.class);
         enderPearl.setPassenger(player);
         enderPearl.setVelocity(velocity);
 
 
-
     }
+
+
 }

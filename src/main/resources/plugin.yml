@@ -1,7 +1,8 @@
 name: pvp
 main: eaglemc.pvp.main
-version: 4.0
-depend: [ProtocolLib]
+version: 4.0.1
+depend: [ProtocolLib,LuckPerms]
 commands:
   pvp:
   stats:
+  spawn:

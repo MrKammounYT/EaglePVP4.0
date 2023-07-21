@@ -1,0 +1,42 @@
+Daily:
+  1:
+    name: '&aDaily Quest 1'
+    requirements:
+      kills: 10
+      deaths: 0
+      points: 10
+      coins: 0
+      xp: 0
+    rewards:
+      coins: 10
+      xp: 0
+    description:
+      - 'Objective 1: Eliminate 10 enemies without dying'
+      - 'Objective 2: Accumulate 10 points during gameplay'
+  2:
+    name: '&aDaily Quest 2'
+    requirements:
+      kills: 5
+      deaths: 0
+      points: 0
+      coins: 0
+      xp: 0
+    rewards:
+      coins: 5
+      xp: 0
+    description:
+      - 'Objective 1: Collect 5 items from treasure chests'
+      - ''
+  3:
+    name: '&aDaily Quest 3'
+    requirements:
+      kills: 8
+      deaths: 0
+      points: 0
+      coins: 0
+      xp: 0
+    rewards:
+      coins: 8
+      xp: 0
+    description:
+      - 'Objective 1: Gather 8 kills'

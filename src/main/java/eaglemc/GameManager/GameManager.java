@@ -1,10 +1,10 @@
 package eaglemc.GameManager;
 
+import eaglemc.DataBase.SPerks;
 import eaglemc.DataBase.SPlayer;
-import eaglemc.Managers.ConfigManager;
-import eaglemc.Managers.DBManager;
-import eaglemc.Managers.KitManager;
-import eaglemc.Managers.PlayerManager;
+import eaglemc.DataBase.STrails;
+import eaglemc.Managers.*;
+import eaglemc.Trails;
 import eaglemc.Utils.UPlayer;
 import eaglemc.pvp.main;
 import org.bukkit.Bukkit;
@@ -23,6 +23,8 @@ public class GameManager {
 
     private final ConfigManager configManager;
 
+    private final QuestManager questManager;
+
     public GameManager(main main){
         configManager = new ConfigManager(main.getConfig());
         this.DBManager = new DBManager(configManager.getConnectionInfo().get("Address"),
@@ -35,13 +37,21 @@ public class GameManager {
         }
         this.playerManager = new PlayerManager(this);
         this.kitManager = new KitManager();
+        this.questManager = new QuestManager(main);
 
 
 
     }
+
+    public QuestManager getQuestManager() {
+        return questManager;
+    }
+
     public void SaveData(){
+        SPlayer sPlayer = DBManager.getSPlayer();
+        SPerks sPerks = DBManager.getsPerks();
+        STrails sTrails =DBManager.getsTrails();
         for (UUID uuid : playerManager.getPlayers().keySet()){
-            SPlayer sPlayer = DBManager.getSPlayer();
             UPlayer up = playerManager.getPlayers().get(uuid);
             sPlayer.setCoins(uuid.toString(),up.getCoins());
             sPlayer.setLevel(uuid.toString(),up.getLevel());
@@ -49,6 +59,17 @@ public class GameManager {
             sPlayer.setKill(uuid.toString(),up.getKills());
             sPlayer.setExp(uuid.toString(),up.getExp());
             sPlayer.setPoints(uuid.toString(),up.getPoints());
+            sPlayer.setCustomName(uuid,up.getCustomName());
+            for(int id : up.getPlayerPerks()){
+                sPerks.addPerk(uuid,id);
+            }
+            for(int i=1;i<5;i++){
+                sPerks.setPerkInSlot(uuid,i,up.getPerkInSlot(i).getId());
+            }
+            for(Trails trails : up.getTrails()){
+                sTrails.addTrail(uuid,trails.getId());
+            }
+            sTrails.SetSelectedTrail(uuid,up.getSelectedTrail().getId());
         }
     }
 

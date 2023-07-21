@@ -12,18 +12,19 @@ public class ScoreBoard {
 
         FastBoard board = new FastBoard(up.getPlayer());
         up.setScoreBoard(board);
-        board.updateTitle(main.color("&6&l⚔ PvP &e&l4.0"));
+        board.updateTitle(main.color("&6&l⚔ PvP &e&l4.0-Beta"));
 
 
         board.updateLines(
                 "         ",
                 main.color("&fLevel: " + up.getStringLevel()),
                 main.color("&fRequired XP: &b"+up.getXPToLevelUp()),
-                main.color("&fQuest: &cDisabled"),
+                main.color("&fQuest: &eComing soon"),
                 "          ",
                 main.color("&fDeaths: &a" + up.getDeaths()),
                 main.color("&fKills: &a" + up.getKills()),
                 main.color("&fPoints: &a"+up.getPoints()),
+                main.color("&fCoins: &a"+up.getCoins()),
                 main.color("&fKillStreaks: &a"+up.getKillStreaks()),
                 "   ",
                 main.color("&eEaglemc.net")
@@ -35,12 +36,14 @@ public class ScoreBoard {
         board.updateLines(
                 "         ",
                 main.color("&fLevel: " + up.getStringLevel()),
-                main.color("&fRequired XP: &b"+up.getRequiredXP()),
-                main.color("&fQuest: &cDisabled"),
+                main.color("&fRequired XP: &b"+up.getXPToLevelUp()),
+                main.color("&fQuest: &eComing soon"),
                 "          ",
                 main.color("&fDeaths: &a" + up.getDeaths()),
                 main.color("&fKills: &a" + up.getKills()),
                 main.color("&fPoints: &a"+up.getPoints()),
+                main.color("&fCoins: &a"+up.getCoins()),
+                main.color("&fKillStreaks: &a"+up.getKillStreaks()),
                 "   ",
                 main.color("&eEaglemc.net")
         );

@@ -1,6 +1,7 @@
-Prefix: '&e&lPvP &7-> '
+Prefix: '&e&lPvP &8» '
 Shop-Npc-Name: '&a&lSHOP'
 Quest-Npc-Name: '&e&lQUESTS'
+Leaderboard-update-time: 3600
 MySQL:
   JDBC: ''
   Address: ''

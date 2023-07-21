@@ -1,7 +1,9 @@
 package eaglemc.Managers;
 
 import com.mysql.jdbc.Connection;
+import eaglemc.DataBase.SPerks;
 import eaglemc.DataBase.SPlayer;
+import eaglemc.DataBase.STrails;
 import org.bukkit.Bukkit;
 
 import java.sql.DriverManager;
@@ -12,7 +14,9 @@ public class DBManager {
     private Connection connection;
 
     private SPlayer sPlayer;
+    private SPerks sPerks;
 
+    private STrails sTrails;
 
     public Connection getConnection() {
         return connection;
@@ -31,8 +35,18 @@ public class DBManager {
             }
         if(isConnected()){
             sPlayer = new SPlayer(connection);
+            sPerks = new SPerks(connection);
+            sTrails = new STrails(connection);
         }
 
+    }
+
+    public STrails getsTrails() {
+        return sTrails;
+    }
+
+    public SPerks getsPerks() {
+        return sPerks;
     }
 
     public SPlayer getSPlayer() {

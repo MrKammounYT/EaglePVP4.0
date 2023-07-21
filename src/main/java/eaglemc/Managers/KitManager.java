@@ -165,7 +165,7 @@ public class KitManager {
                     meta.setDisplayName(main.color(displayname));
                 }
                 if (mt == Material.FLINT_AND_STEEL) {
-                    meta.setDisplayName(main.color("&eFlint: &a1"));
+                    meta.setDisplayName(main.color("&6Charge: &e"));
                 }
                 List<String> enchants = config.getStringList(slot + "enchants");
                 if (enchants != null) {
@@ -188,7 +188,9 @@ public class KitManager {
                 content.put(Integer.parseInt(slt), itemStack);
             }
             if(content.isEmpty())return;
-            kits.put(kitname, new Kit(config.getString("Kits." + kitname + ".permission"),content));
+            kits.put(kitname, new Kit(config.getString("Kits." + kitname + ".permission"),content,config.getString("Kits." + kitname + ".displayname")
+                    ,config.getInt("Kits."+kitname+".slot"),Material.getMaterial(config.getString("Kits."+kitname+".icon").toUpperCase())
+            ,config.getBoolean("Kits."+kitname+".buyable"),config.getInt("Kits."+kitname+".price")));
             Bukkit.getConsoleSender().sendMessage(main.Prefix + "§eKit §a" + kitname + " §eHas Been Loaded with §a" +content.size());
         }
 
@@ -200,6 +202,12 @@ public class KitManager {
             is = p.getInventory().getItem(i);
             slot = "Kits."+Name +".items."+ String.valueOf(i);
             config.set("Kits." + Name + ".permission","noperm");
+            config.set("Kits." + Name + ".displayname",Name);
+            config.set("Kits." + Name + ".icon",Material.IRON_CHESTPLATE.toString().toLowerCase());
+            config.set("Kits." + Name + ".buyable",false);
+            config.set("Kits." + Name + ".price",0);
+            config.set("Kits." + Name + ".slot",1);
+
             if (is == null || is.getType() == Material.AIR)continue;
             config.set(slot + ".type", is.getType().toString().toLowerCase());
             config.set(slot + ".amount", is.getAmount());

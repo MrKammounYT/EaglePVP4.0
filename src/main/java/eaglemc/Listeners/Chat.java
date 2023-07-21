@@ -17,6 +17,6 @@ public class Chat implements Listener {
     public void PlayerChatEvent(AsyncPlayerChatEvent e)
     {
         UPlayer up = gameManager.getPlayerManager().getPlayer(e.getPlayer());
-        e.setFormat(up.getStringLevel() + " "+e.getPlayer().getDisplayName() + " §7» " + e.getMessage());
+        e.setFormat(up.getCustomName() +  " §7» " + e.getMessage());
     }
 }

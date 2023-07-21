@@ -1,5 +1,6 @@
 package eaglemc.Commands;
 
+import eaglemc.DataBase.DataContainer;
 import eaglemc.GameManager.GameManager;
 import eaglemc.Utils.Heads;
 import eaglemc.Utils.LocationAPI;
@@ -19,12 +20,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
-public class admin implements CommandExecutor {
+public class Admin implements CommandExecutor {
 
 
     private final GameManager gm;
 
-    public admin(GameManager gm){
+    public Admin(GameManager gm){
         this.gm = gm;
     }
 
@@ -85,7 +86,7 @@ public class admin implements CommandExecutor {
                     nmsVil.f(comp);
                     nmsVil.b(true);
                 }
-                else if(args[1].equalsIgnoreCase("quests")){
+             /*   else if(args[1].equalsIgnoreCase("quests")){
                     LocationAPI.setLocation(p.getLocation(),args[1]);
                     p.sendMessage(main.Prefix + main.color("&aLocation &e"+ args[1] + " &ahas been set!"));
                     Villager shop = p.getWorld().spawn(p.getLocation(),Villager.class);
@@ -102,7 +103,7 @@ public class admin implements CommandExecutor {
                     nmsVil.b(true);
 
 
-                }
+                }*/
                 else{
                     p.sendMessage(main.Prefix + main.color("&c&l/pvp setloc (spawn/leaderboard/shop/quests"));
                 }
@@ -115,9 +116,10 @@ public class admin implements CommandExecutor {
                     if(args[2].equalsIgnoreCase("1") || args[2].equalsIgnoreCase("2")
                             || args[2].equalsIgnoreCase("3")){
                         Location lc= p.getLocation();
-                        LocationAPI.setLocation(lc,"top"+args[2]);
                         int limit = Integer.parseInt(args[2]);
-                        CreateTopPlayers(lc,gm.getDBManager().getSPlayer().getTop(limit),limit);
+                        LocationAPI.setLocation(lc,"top"+limit);
+                        DataContainer map = gm.getDBManager().getSPlayer().getTop(limit);
+                        CreateTopPlayers(lc,map.getCustomName(),map.getPoints(),limit);
 
 
                     }
@@ -215,11 +217,22 @@ public class admin implements CommandExecutor {
 
 
 
-    void CreateTopPlayers(Location lc,String name,int top){
+    void CreateTopPlayers(Location lc,String name,int Kills,int top){
         ArmorStand player = lc.getWorld().spawn(lc,ArmorStand.class);
+        ArmorStand topArmorStand = lc.getWorld().spawn(lc.clone().add(0,0.5,0),ArmorStand.class);
+        ArmorStand under = lc.getWorld().spawn(lc.clone().add(0,-0.5,0),ArmorStand.class);
+        under.setVisible(false);
+        under.setCustomNameVisible(true);
+        under.setCustomName(main.color("&a"+Kills +" &eKills"));
+        under.setGravity(false);
+        topArmorStand.setCustomName(main.color("&e#&a&l"+top + " &r"+name));
+        topArmorStand.setCustomNameVisible(true);
+        topArmorStand.setVisible(false);
+        topArmorStand.setGravity(false);
+
+
         player.setSmall(true);
-        player.setCustomName(main.color("&e#&a&l"+top + " &r"+name));
-        player.setCustomNameVisible(true);
+        player.setCustomNameVisible(false);
         player.setHelmet(Heads.getPlayerHead(name));
         if(top == 1){
             player.setItemInHand(new ItemStack(Material.DIAMOND_SWORD));
@@ -247,10 +260,10 @@ public class admin implements CommandExecutor {
 
     void Help(Player p){
         p.sendMessage(main.color("&eAvailable commands:"));
-        p.sendMessage(main.color("&e/cosmetics setkit <kitName> &7- Create a new kit"));
-        p.sendMessage(main.color("&e/cosmetics setlocation <location> &7- Set a specific location"));
-        p.sendMessage(main.color("&e/cosmetics give <what> <player> <amount> &7- Give resources to a player"));
-        p.sendMessage(main.color("&e/cosmetics set <what> <player> <amount> &7- Set the value of a resource for a player"));
+        p.sendMessage(main.color("&e/pvp setkit <kitName> &7- Create a new kit"));
+        p.sendMessage(main.color("&e/pvp setlocation <location> &7- Set a specific location"));
+        p.sendMessage(main.color("&e/pvp give <what> <player> <amount> &7- Give resources to a player"));
+        p.sendMessage(main.color("&e/pvp set <what> <player> <amount> &7- Set the value of a resource for a player"));
         p.sendMessage(main.color("&eNote: Replace <kitName>, <location>, <what>, <player>, and <amount> with appropriate values."));
 
     }
