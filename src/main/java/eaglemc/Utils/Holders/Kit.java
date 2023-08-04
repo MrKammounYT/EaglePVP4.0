@@ -1,4 +1,4 @@
-package eaglemc.Utils;
+package eaglemc.Utils.Holders;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

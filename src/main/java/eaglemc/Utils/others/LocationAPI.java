@@ -1,4 +1,4 @@
-package eaglemc.Utils;
+package eaglemc.Utils.others;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

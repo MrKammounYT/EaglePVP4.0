@@ -1,7 +1,7 @@
 package eaglemc.Listeners;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Utils.UPlayer;
+import eaglemc.Utils.Holders.UPlayer;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -22,7 +22,7 @@ public class Flint implements Listener {
             UPlayer up = pm.getPlayer(e.getPlayer());
             if(up.getFlint() > 0){
                 e.setCancelled(false);
-                up.removeflint(1,e.getPlayer());
+                up.removeFlint(1,e.getPlayer());
                 return;
             }
             e.setCancelled(true);

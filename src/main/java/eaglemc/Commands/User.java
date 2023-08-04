@@ -1,9 +1,9 @@
 package eaglemc.Commands;
 
 import eaglemc.GameManager.GameManager;
-import eaglemc.Utils.LocationAPI;
-import eaglemc.Utils.UPlayer;
-import eaglemc.Utils.Utils;
+import eaglemc.Utils.others.LocationAPI;
+import eaglemc.Utils.Holders.UPlayer;
+import eaglemc.Utils.Holders.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;

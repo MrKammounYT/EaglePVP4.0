@@ -1,4 +1,4 @@
-package eaglemc.Utils;
+package eaglemc.Utils.others;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;

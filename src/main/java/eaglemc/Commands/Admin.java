@@ -2,15 +2,12 @@ package eaglemc.Commands;
 
 import eaglemc.DataBase.DataContainer;
 import eaglemc.GameManager.GameManager;
-import eaglemc.Utils.Heads;
-import eaglemc.Utils.LocationAPI;
+import eaglemc.Utils.others.Heads;
+import eaglemc.Utils.others.LocationAPI;
 import eaglemc.Utils.ScoreBoard;
 import eaglemc.pvp.main;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,6 +45,7 @@ public class Admin implements CommandExecutor {
             else if(args[0].equalsIgnoreCase("build")){
                 if(gm.getPlayerManager().getPlayer(p).isInBuild()){
                     p.sendMessage(main.Prefix + main.color("&cYou have left build mode !"));
+                    p.setGameMode(GameMode.SURVIVAL);
                     gm.getPlayerManager().getPlayer(p).setBuilding(false);
                     p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,3.0f);
                     return true;
@@ -55,7 +53,12 @@ public class Admin implements CommandExecutor {
                 gm.getPlayerManager().getPlayer(p).setBuilding(true);
                 p.sendMessage(main.Prefix + main.color("&aYou have entered build mode !"));
                 p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,3.0f);
+                p.setGameMode(GameMode.CREATIVE);
 
+
+            }
+            else if(args[0].equalsIgnoreCase("reload")){
+                main.getInstance().reload(p);
             }
 
         } else if (args.length == 2) {
@@ -141,27 +144,27 @@ public class Admin implements CommandExecutor {
                 if(what.equalsIgnoreCase("xp")){
                     gm.getPlayerManager().getPlayer(t).addexp(t,amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been added to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                else if(what.equalsIgnoreCase("kills")){
                     gm.getPlayerManager().getPlayer(t).addKills(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been added to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("deaths")){
                     gm.getPlayerManager().getPlayer(t).addDeaths(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been added to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("points")){
                     gm.getPlayerManager().getPlayer(t).addPoints(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been added to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("coins")){
                     gm.getPlayerManager().getPlayer(t).addCoins(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been added to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
 
             }
@@ -176,32 +179,32 @@ public class Admin implements CommandExecutor {
                 if(what.equalsIgnoreCase("xp")){
                     gm.getPlayerManager().getPlayer(t).setexp(t,amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been set to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("kills")){
                     gm.getPlayerManager().getPlayer(t).setKills(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been set to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("deaths")){
                     gm.getPlayerManager().getPlayer(t).setDeaths(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been set to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("points")){
                     gm.getPlayerManager().getPlayer(t).setPoints(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been set to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("coins")){
                     gm.getPlayerManager().getPlayer(t).setCoins(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been set to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
                 else if(what.equalsIgnoreCase("level")){
                     gm.getPlayerManager().getPlayer(t).setlevel(amount);
                     p.sendMessage(main.Prefix + main.color("&a"+amount +" &e"+args[1]+" has been set to "+t.getDisplayName()));
-                    ScoreBoard.refresh(gm.getPlayerManager().getPlayer(t));
+                    ScoreBoard.create(p,gm.getPlayerManager().getPlayer(t));
                 }
 
             }

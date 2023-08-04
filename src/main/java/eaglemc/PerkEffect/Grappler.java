@@ -1,9 +1,7 @@
 package eaglemc.PerkEffect;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Perks;
-import eaglemc.Utils.UPlayer;
-import org.bukkit.Location;
+import eaglemc.enums.Perks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;

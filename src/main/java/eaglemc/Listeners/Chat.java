@@ -1,7 +1,8 @@
 package eaglemc.Listeners;
 
 import eaglemc.GameManager.GameManager;
-import eaglemc.Utils.UPlayer;
+import eaglemc.Utils.others.EmojiUtils;
+import eaglemc.Utils.Holders.UPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -17,6 +18,6 @@ public class Chat implements Listener {
     public void PlayerChatEvent(AsyncPlayerChatEvent e)
     {
         UPlayer up = gameManager.getPlayerManager().getPlayer(e.getPlayer());
-        e.setFormat(up.getCustomName() +  " §7» " + e.getMessage());
+        e.setFormat(up.getCustomName() +  " §7» " + EmojiUtils.turnToEmoji(e.getMessage()));
     }
 }

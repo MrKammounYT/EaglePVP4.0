@@ -2,9 +2,9 @@ package eaglemc.Runnables;
 
 import eaglemc.DataBase.DataContainer;
 import eaglemc.GameManager.GameManager;
-import eaglemc.Utils.Heads;
-import eaglemc.Utils.LocationAPI;
-import eaglemc.Utils.Utils;
+import eaglemc.Utils.others.Heads;
+import eaglemc.Utils.others.LocationAPI;
+import eaglemc.Utils.Holders.Utils;
 import eaglemc.pvp.main;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
@@ -19,9 +19,6 @@ import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class LeaderBoardUpdate extends BukkitRunnable {
 
     int timer;
@@ -32,8 +29,8 @@ public class LeaderBoardUpdate extends BukkitRunnable {
     public LeaderBoardUpdate(GameManager gm, FileConfiguration file ){
         this.gm = gm;
         initialTime = file.getInt("Leaderboard-update-time");
-        timer = initialTime;
-        UpdateLeaderBoard();
+        timer = 2;
+        //UpdateLeaderBoard();
     }
 
     @Override

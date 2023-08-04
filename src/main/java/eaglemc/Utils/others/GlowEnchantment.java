@@ -1,4 +1,4 @@
-package eaglemc.Utils;
+package eaglemc.Utils.others;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;

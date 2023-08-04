@@ -1,9 +1,9 @@
-package eaglemc;
+package eaglemc.enums;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import eaglemc.Utils.Heads;
+import eaglemc.Utils.others.Heads;
 import eaglemc.pvp.main;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +53,7 @@ public enum Perks {
             lore.add(main.color("&7Deal increased damage when your"));
             lore.add(main.color("&7health is below &c2.0❤"));
         } else if (id == 7) {
-            lore.add(main.color("&7Get 3 arrows on arrow hit."));
+            lore.add(main.color("&730% chance to get 2 arrows on arrow hit."));
         } else if (id == 8) {
             lore.add(main.color("&7Double the &bXP &7earned from kills and assists"));
         }

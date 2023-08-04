@@ -1,15 +1,17 @@
-package eaglemc.Utils;
+package eaglemc.Utils.Holders;
 
-import eaglemc.Perks;
-import eaglemc.Trails;
+import eaglemc.enums.DeathCry;
+import eaglemc.GameManager.GameManager;
+import eaglemc.enums.Perks;
+import eaglemc.enums.Trails;
+import eaglemc.Utils.others.LocationAPI;
+import eaglemc.Utils.Title;
 import eaglemc.pvp.main;
-import fr.mrmicky.fastboard.FastBoard;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +21,6 @@ public class UPlayer {
 
 
 
-    private FastBoard ScoreBoard;
     private int kills;
     private int deaths;
 
@@ -34,12 +35,10 @@ public class UPlayer {
 
     private boolean HasGoldenHead = false;
 
-    private int PerkToPurchase;
-    private int TrailToPurchase;
 
     private final HashMap<Integer, Perks> slots;
 
-    private final ArrayList<Integer> Perks;
+    private final ArrayList<Perks> Perks;
 
     private int SelectedSlot = 0;
     private int exp;
@@ -49,6 +48,8 @@ public class UPlayer {
     private int coins;
 
     private ArrayList<Trails> Trails ;
+
+    private ArrayList<DeathCry> DeathCries;
     private final Uassist uassist = new Uassist();
 
     private Kit kit;
@@ -70,14 +71,16 @@ public class UPlayer {
 
     private final String rankColor;
 
+    private  DeathCry SelectedDeathCry;
+
     private int flint = 2;
 
 
 
 
 
-    public UPlayer(UUID uuid, int kills, int deaths, int points, int coins, int exp, int level, String rankColor, ArrayList<Integer> perks, HashMap<Integer, Perks> slots,
-                   ArrayList<Trails> trails, Trails SelectedTrail){
+    public UPlayer(Player p, GameManager manager, UUID uuid, int kills, int deaths, int points, int coins, int exp, int level, String rankColor, ArrayList<Perks> perks, HashMap<Integer, Perks> slots,
+                   ArrayList<Trails> trails, Trails SelectedTrail, ArrayList<DeathCry> DC, DeathCry selectedDC){
         this.kills = kills;
         this.deaths= deaths;
         this.points = points;
@@ -90,6 +93,40 @@ public class UPlayer {
         this.slots = slots;
         this.SelectedTrail = SelectedTrail;
         this.Trails = trails;
+        this.SelectedDeathCry = selectedDC;
+        this.DeathCries = DC;
+        for(Kit kits: manager.getKitManager().getKits().values()){
+            if(kits.getPermission().equals("noperm")){
+                setKit(kits);
+                continue;
+            }
+            if(p.hasPermission(kits.getPermission())){
+                setKit(kits);
+
+            }
+        }
+                p.teleport(LocationAPI.getLocation("spawn"));
+                p.setGameMode(GameMode.SURVIVAL);
+                p.setHealth(20);
+                p.setFoodLevel(20);
+                eaglemc.Utils.ScoreBoard.create(p,UPlayer.this);
+                for(PotionEffect effects : p.getActivePotionEffects()){
+                    p.removePotionEffect(effects.getType());
+                }
+                wearKit(p);
+
+    }
+
+    public void setSelectedDeathCry(DeathCry selectedDeathCry) {
+        SelectedDeathCry = selectedDeathCry;
+    }
+
+    public DeathCry getSelectedDeathCry() {
+        return SelectedDeathCry;
+    }
+
+    public ArrayList<DeathCry> getDeathCries() {
+        return DeathCries;
     }
 
     public void addDailyQuest(Quest quest){
@@ -100,31 +137,38 @@ public class UPlayer {
         return DailyQuests;
     }
 
-    public eaglemc.Trails getSelectedTrail() {
+    public eaglemc.enums.Trails getSelectedTrail() {
         return SelectedTrail;
     }
     public void setSelectedTrail(Trails trail){
         this.SelectedTrail = trail;
     }
 
-    public void setTrailToPurchase(int trailToPurchase) {
-        TrailToPurchase = trailToPurchase;
-    }
 
 
     public int getFlint() {
         return flint;
     }
 
-    public void addflint(int flint) {
+    public void addFlint(int flint,Player p) {
         this.flint +=flint;
-        updateFlint(p.getItemInHand());
+        updateFlint(p);
+
 
     }
-    public  void removeflint(int flint,Player p) {
+    public  void removeFlint(int flint,Player p) {
         this.flint -=flint;
-        updateFlint(p.getItemInHand());
+        updateFlint(p);
+    }
+    private int getFlintSlot(Player p){
+        for(int i=0;i<p.getInventory().getSize();i++){
+            if(p.getInventory().getItem(i) ==null)continue;
+            if(p.getInventory().getItem(i).getType() == Material.FLINT_AND_STEEL){
+                return i;
 
+            }
+        }
+        return -1;
     }
 
     public int getDailyCoins() {
@@ -147,18 +191,18 @@ public class UPlayer {
         return dailyXP;
     }
 
-    private ItemStack updateFlint(ItemStack item){
+    private void updateFlint(Player p){
+        int slot = getFlintSlot(p);
+        if(slot == -1)return;
+        ItemStack item = p.getInventory().getItem(slot);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(main.color("&6Charge: &e" + flint));
         item.setItemMeta(meta);
-        return  item;
+        p.getInventory().setItem(slot, item);
     }
 
-    public int getTrailToPurchase() {
-        return TrailToPurchase;
-    }
 
-    public ArrayList<eaglemc.Trails> getTrails() {
+    public ArrayList<eaglemc.enums.Trails> getTrails() {
         return Trails;
     }
 
@@ -187,7 +231,7 @@ public class UPlayer {
         return main.color(getStringLevel() + " "+getRankColor()+p.getName());
     }
 
-    public ArrayList<Integer> getPlayerPerks(){
+    public ArrayList<Perks> getPlayerPerks(){
         return Perks;
     }
     public Perks getPerkInSlot(int slot){
@@ -216,13 +260,7 @@ public class UPlayer {
         this.build = build;
     }
 
-    public void setScoreBoard(FastBoard scoreBoard) {
-        ScoreBoard = scoreBoard;
-    }
 
-    public FastBoard getScoreBoard() {
-        return ScoreBoard;
-    }
 
     public Player getPlayer() {
         return p;
@@ -296,14 +334,6 @@ public class UPlayer {
         if(!levelup)return;
         p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,1.8f);
 
-    }
-
-    public void setPerkToPurchase(int perkToPurchase) {
-        PerkToPurchase = perkToPurchase;
-    }
-
-    public int getPerkToPurchase() {
-        return PerkToPurchase;
     }
 
     public int getPoints() {
@@ -386,4 +416,6 @@ public class UPlayer {
     public void setlevel(int amount) {
         level = amount;
     }
+
+
 }

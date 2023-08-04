@@ -1,10 +1,9 @@
-package eaglemc.Utils;
+package eaglemc.Utils.Holders;
 
-import eaglemc.TQuests;
+import eaglemc.enums.TQuests;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Quest {
 

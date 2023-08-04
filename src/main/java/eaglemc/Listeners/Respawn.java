@@ -1,7 +1,7 @@
 package eaglemc.Listeners;
 
 import eaglemc.GameManager.GameManager;
-import eaglemc.Utils.LocationAPI;
+import eaglemc.Utils.others.LocationAPI;
 import eaglemc.Utils.Title;
 import eaglemc.pvp.main;
 import org.bukkit.GameMode;
@@ -24,7 +24,7 @@ public class Respawn implements Listener {
         Player p = e.getPlayer();
         p.setGameMode(GameMode.SPECTATOR);
         p.setHealth(20);
-        p.teleport(gm.getPlayerManager().getPlayer(p).getDeathLocation());
+        e.setRespawnLocation(gm.getPlayerManager().getPlayer(p).getDeathLocation());
         Title.sendTitle(p, main.color("&cYou Died"),main.color("&fRespawning in 3 seconds"),40);
         new BukkitRunnable(){
             @Override

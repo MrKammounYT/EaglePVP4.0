@@ -1,14 +1,11 @@
 package eaglemc.Managers;
 
-import eaglemc.TQuests;
-import eaglemc.Utils.Quest;
+import eaglemc.enums.TQuests;
+import eaglemc.Utils.Holders.Quest;
 import eaglemc.pvp.main;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.util.ArrayList;

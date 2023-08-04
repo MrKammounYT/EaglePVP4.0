@@ -1,4 +1,4 @@
-package eaglemc;
+package eaglemc.enums;
 
 import eaglemc.pvp.main;
 import net.minecraft.server.v1_8_R3.EnumParticle;

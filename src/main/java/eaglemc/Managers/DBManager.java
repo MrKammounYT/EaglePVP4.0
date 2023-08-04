@@ -1,6 +1,7 @@
 package eaglemc.Managers;
 
 import com.mysql.jdbc.Connection;
+import eaglemc.DataBase.SDeathCry;
 import eaglemc.DataBase.SPerks;
 import eaglemc.DataBase.SPlayer;
 import eaglemc.DataBase.STrails;
@@ -17,6 +18,7 @@ public class DBManager {
     private SPerks sPerks;
 
     private STrails sTrails;
+    private SDeathCry sDeathCry;
 
     public Connection getConnection() {
         return connection;
@@ -37,8 +39,13 @@ public class DBManager {
             sPlayer = new SPlayer(connection);
             sPerks = new SPerks(connection);
             sTrails = new STrails(connection);
+            sDeathCry = new SDeathCry(connection);
         }
 
+    }
+
+    public SDeathCry getsDeathCry() {
+        return sDeathCry;
     }
 
     public STrails getsTrails() {

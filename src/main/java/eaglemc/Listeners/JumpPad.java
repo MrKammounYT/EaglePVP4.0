@@ -1,27 +1,18 @@
 package eaglemc.Listeners;
 
-import com.comphenix.protocol.*;
-import com.comphenix.protocol.events.PacketAdapter;
-import eaglemc.pvp.main;
-import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
+
 import java.util.Random;
-import java.util.UUID;
 
 public class JumpPad implements Listener {
     private final Random random = new Random();
@@ -32,46 +23,18 @@ public class JumpPad implements Listener {
 
         if (e.getTo().getBlock().getType() == Material.GOLD_PLATE) {
             if(e.getPlayer().getGameMode() != GameMode.SURVIVAL)return;
-            launchEnderPearl(e.getPlayer());
+            Player p = e.getPlayer();
+            p.playSound(p.getLocation(), Sound.ENDERDRAGON_WINGS,5.0f,3.0f);
+            Vector v = p.getLocation().getDirection().clone().normalize();
+            v.multiply(2);
+            v.setY(0.8D);
+            p.setVelocity(v);
         }
     }
 
-    public void PacketRecive(){
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(main.getInstance(), PacketType.Play.Client.STEER_VEHICLE) {
-            @Override
-            public void onPacketReceiving (com.comphenix.protocol.events.PacketEvent e) {
-                if(e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
-                    if(e.getPacket().getHandle() instanceof PacketPlayInSteerVehicle) {
-                        Field f = null;
-                        try {
-                            f = PacketPlayInSteerVehicle.class.getDeclaredField("d");
-                            f.setAccessible(true);
-                            f.set(e.getPacket().getHandle(), false);
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onPacketSending (com.comphenix.protocol.events.PacketEvent e) {
-                e.setCancelled(true);
-            }
-        });
-    }
-
-    private void launchEnderPearl(Player player) {
-        player.playSound(player.getLocation(), Sound.ENDERDRAGON_WINGS,5.0f,3.0f);
-        Location location = player.getLocation();
-        Vector direction = player.getEyeLocation().getDirection();
-        Vector velocity = new Vector(direction.getX(), 0.5, direction.getZ());
-        EnderPearl enderPearl = player.launchProjectile(EnderPearl.class);
-        enderPearl.setPassenger(player);
-        enderPearl.setVelocity(velocity);
 
 
-    }
+
 
 
 }

@@ -1,8 +1,8 @@
 package eaglemc.Listeners;
 
-import eaglemc.GameManager.GameManager;
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Utils.Utils;
+import eaglemc.Utils.Holders.Utils;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.*;
 import eaglemc.pvp.main;
@@ -22,8 +21,14 @@ public class Options implements Listener {
     private final PlayerManager pm;
 
 
+
     public Options(PlayerManager pm) {
         this.pm = pm;
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e){
+        e.setQuitMessage(null);
     }
 
     @EventHandler
@@ -58,7 +63,9 @@ public class Options implements Listener {
         || e.getClickedBlock().getType() == Material.TRAPPED_CHEST
         || e.getClickedBlock().getType() == Material.TRAP_DOOR
         || e.getClickedBlock().getType() == Material.WOOD_DOOR
-        || e.getClickedBlock().getType() == Material.ITEM_FRAME){
+        || e.getClickedBlock().getType() == Material.ITEM_FRAME
+                || e.getClickedBlock().getType() == Material.BED
+                || e.getClickedBlock().getType() == Material.BEACON){
             e.setCancelled(true);
         }
     }

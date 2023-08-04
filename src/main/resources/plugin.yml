@@ -1,6 +1,6 @@
 name: pvp
 main: eaglemc.pvp.main
-version: 4.0.1
+version: 4.0.2
 depend: [ProtocolLib,LuckPerms]
 commands:
   pvp:

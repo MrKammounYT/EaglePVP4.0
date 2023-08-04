@@ -1,6 +1,6 @@
 package eaglemc.Managers;
 
-import eaglemc.Utils.Kit;
+import eaglemc.Utils.Holders.Kit;
 import eaglemc.pvp.main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -165,7 +164,7 @@ public class KitManager {
                     meta.setDisplayName(main.color(displayname));
                 }
                 if (mt == Material.FLINT_AND_STEEL) {
-                    meta.setDisplayName(main.color("&6Charge: &e"));
+                    meta.setDisplayName(main.color("&6Charge: &e1"));
                 }
                 List<String> enchants = config.getStringList(slot + "enchants");
                 if (enchants != null) {

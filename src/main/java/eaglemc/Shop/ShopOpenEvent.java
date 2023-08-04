@@ -1,11 +1,9 @@
 package eaglemc.Shop;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Shop.Items;
-import eaglemc.Utils.UPlayer;
-import eaglemc.Utils.Utils;
-import eaglemc.pvp.main;
-import org.bukkit.Bukkit;
+import eaglemc.Shop.Items.Items;
+import eaglemc.Shop.Menus.Menu;
+import eaglemc.Utils.Holders.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -13,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.Inventory;
 
 public class ShopOpenEvent implements Listener {
 

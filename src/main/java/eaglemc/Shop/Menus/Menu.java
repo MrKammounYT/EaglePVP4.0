@@ -1,14 +1,17 @@
-package eaglemc.Shop;
+package eaglemc.Shop.Menus;
 
+import eaglemc.enums.DeathCry;
 import eaglemc.GameManager.GameManager;
-import eaglemc.Perks;
-import eaglemc.Trails;
-import eaglemc.Utils.GlowEnchantment;
-import eaglemc.Utils.Kit;
-import eaglemc.Utils.UPlayer;
+import eaglemc.Shop.Items.Items;
+import eaglemc.enums.Perks;
+import eaglemc.enums.Trails;
+import eaglemc.enums.Type;
+import eaglemc.Utils.others.GlowEnchantment;
+import eaglemc.Utils.Holders.Kit;
+import eaglemc.Utils.Inventory.SelectionInventory;
+import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -28,21 +31,22 @@ public class Menu {
         inv.setItem(14,items.getPerkInSlot(up,3));
         inv.setItem(16,items.getPerkInSlot(up,4));
 
-        inv.setItem(30,items.Trails());
-        inv.setItem(32,items.Kits());
+        inv.setItem(29,items.Trails());
+        inv.setItem(31,items.BattleCry());
+        inv.setItem(33,items.Kits());
         p.openInventory(inv);
     }
     public static void OpenPerksMenu(Player p, UPlayer up,int slot){
-        Inventory inv = Bukkit.createInventory(null,36,"Choose a Perk");
-        inv.setItem(11,items.getShopPerk(up,1));
-        inv.setItem(12,items.getShopPerk(up,2));
-        inv.setItem(13,items.getShopPerk(up,3));
-        inv.setItem(14,items.getShopPerk(up,4));
-        inv.setItem(15,items.getShopPerk(up,5));
+        Inventory inv = Bukkit.createInventory(new SelectionInventory(Type.Perks),36,"Choose a Perk");
+        inv.setItem(11,items.getShopPerk(up, Perks.TNT));
+        inv.setItem(12,items.getShopPerk(up,Perks.GOLDEN_HEAD));
+        inv.setItem(13,items.getShopPerk(up,Perks.STRENGTH));
+        inv.setItem(14,items.getShopPerk(up,Perks.Vampire));
+        inv.setItem(15,items.getShopPerk(up,Perks.GRAPPLER));
 
-        inv.setItem(21,items.getShopPerk(up,6));
-        inv.setItem(22,items.getShopPerk(up,7));
-        inv.setItem(23,items.getShopPerk(up,8));
+        inv.setItem(21,items.getShopPerk(up,Perks.BERSERKER));
+        inv.setItem(22,items.getShopPerk(up,Perks.Endless_Quiver));
+        inv.setItem(23,items.getShopPerk(up,Perks.DOUBLE_XP));
 
 
         inv.setItem(27,items.GoBack());
@@ -52,7 +56,7 @@ public class Menu {
     }
 
     public static void OpenTrailsMenu(Player p , UPlayer up){
-        Inventory inv = Bukkit.createInventory(null,27,"Arrow Trails");
+        Inventory inv = Bukkit.createInventory(new SelectionInventory(Type.Trails),27,"Arrow Trails");
         inv.setItem(11,items.getTrail(Trails.HEARTS,up));
         inv.setItem(12,items.getTrail(Trails.SMOKE,up));
         inv.setItem(13,items.getTrail(Trails.MAGIC,up));
@@ -63,16 +67,16 @@ public class Menu {
         p.openInventory(inv);
     }
 
-    public static void OpenPurchaseMenuPerks(Player p,Perks perk){
-        Inventory inv = Bukkit.createInventory(null,27,"Are you sure ?");
-        inv.setItem(11,Purchase(perk.getPerkName(),perk.getPrice()));
-        inv.setItem(15,Decline());
-        p.openInventory(inv);
-    }
-    public static void OpenPurchaseMenuTrails(Player p,Trails trails){
-        Inventory inv = Bukkit.createInventory(null,27,"Are you sure ?.");
-        inv.setItem(11,Purchase(trails.getDisplayName(),trails.getPrice()));
-        inv.setItem(15,Decline());
+
+    public static void openDeathCryMenu(Player p,UPlayer up){
+        Inventory inv = Bukkit.createInventory(new SelectionInventory(Type.DeathCry),27,"Death Cry");
+        inv.setItem(11,items.getDeathCry(DeathCry.CAT,up));
+        inv.setItem(12,items.getDeathCry(DeathCry.ENDER_MAN,up));
+        inv.setItem(13,items.getDeathCry(DeathCry.GHAST,up));
+        inv.setItem(14,items.getDeathCry(DeathCry.Guardian,up));
+        inv.setItem(15,items.getDeathCry(DeathCry.wolf,up));
+        inv.setItem(26,items.ClearDeathCry());
+        inv.setItem(18,items.GoBack());
         p.openInventory(inv);
     }
 
@@ -119,26 +123,5 @@ public class Menu {
         item.setItemMeta(meta);
         return item;
     }
-        private  static  ItemStack Purchase(String name,int price){
-        ItemStack item = new ItemStack(Material.STAINED_GLASS_PANE,1,(short) 5);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(main.color("&aPurchase"));
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(main.color("&7Purchasing: "+name));
-        lore.add(main.color("&7Price: &6"+price));
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
-    }
-    private static ItemStack Decline(){
-        ItemStack item = new ItemStack(Material.STAINED_GLASS_PANE,1,(short) 14);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(main.color("&cCancel"));
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(main.color("&7Cancel and return"));
-        lore.add(main.color("&7To the main menu"));
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
-    }
+
 }

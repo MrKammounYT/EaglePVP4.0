@@ -1,11 +1,11 @@
 package eaglemc.Listeners;
 
 import eaglemc.GameManager.GameManager;
-import eaglemc.Perks;
+import eaglemc.enums.Perks;
+import eaglemc.Utils.ScoreBoard;
 import eaglemc.Utils.Title;
-import eaglemc.Utils.UPlayer;
+import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
-import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,10 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
-import java.util.Map;
 import java.util.Random;
 
 public class Death implements Listener {
@@ -48,14 +46,16 @@ public class Death implements Listener {
             exp *=2;
         }
         uk.addKillStreak();
+            ScoreBoard.create(p,up);
+            ScoreBoard.create(k,uk);
         DecimalFormat df = new DecimalFormat("##.##");
         String health = df.format(k.getHealth() / 2.0D);
         Title.sendActionBar(k,main.color("&a&lKilled "+p.getDisplayName()+" with "+health + " &c❤ left"));
         Title.sendActionBar(p,main.color("&c&lKilled By "+k.getDisplayName()+" with "+health + " &c❤ left"));
         k.sendMessage(main.Prefix + main.color("&a&lKILL! &7on "+p.getDisplayName() + " &b+"+exp+"XP" +" &6+"+coins+"✪"));
         k.setHealth(20);
-        p.sendMessage(main.Prefix + main.color("&c&lDEATH! &7by "+k.getDisplayName()));
         up.setDeathLocation(k.getLocation());
+        p.sendMessage(main.Prefix + main.color("&c&lDEATH! &7by "+k.getDisplayName()));
         up.addDeaths(1);
         givePerk(k,uk);
         int points = (up.getPoints()*3)/100;
@@ -63,13 +63,14 @@ public class Death implements Listener {
             points = getRandomInt(2,10);
         }
         uk.addPoints(points);
-        uk.addflint(1);
+        uk.addFlint(1,p);
         if(up.getPoints() - points >= 0){
             up.removePoints(points);
         }
         uk.addexp(k,exp);
         uk.addKills(1);
         uk.addCoins(coins);
+        playDeathCry(up,k);
             for(Player damagers : up.getUassist().getDamagers().keySet()){
                 if(damagers.getName().equals(k.getName()))continue;
                 int percentage =  up.getUassist().getDamagePercentage(damagers);
@@ -105,6 +106,9 @@ public class Death implements Listener {
         if(e.getEntity().getKiller() != null)return;
         p.sendMessage(main.Prefix + main.color("&c&lDEATH!"));
         up.addDeaths(1);
+        up.setDeathLocation(p.getLocation());
+        ScoreBoard.create(p,up);
+
     }
 
     int getRandomInt(int b1,int b2){
@@ -113,6 +117,11 @@ public class Death implements Listener {
             x = rd.nextInt(b2);
         }
         return x;
+    }
+
+
+    void playDeathCry(UPlayer up,Player k){
+        up.getSelectedDeathCry().playSound(k);
     }
 
     void givePerk(Player p,UPlayer up){

@@ -1,14 +1,12 @@
 package eaglemc.PerkEffect;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Perks;
-import org.bukkit.Sound;
+import eaglemc.enums.Perks;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.util.Vector;
 
 public class Vampire implements Listener {
 
@@ -28,8 +26,9 @@ public class Vampire implements Listener {
             }
         }
         if(e.getDamager() instanceof  Player){
-            if(pm.getPlayer((Player) e.getDamager()).getSlots().containsValue(Perks.Vampire)){
-                ((Player) e.getDamager()).setHealth(((Player) e.getDamager()).getHealth() + 0.2);
+            Player p = (Player) e.getDamager();
+            if(pm.getPlayer(p).getSlots().containsValue(Perks.Vampire)){
+                p.setHealth(p.getHealth() + 0.2);
             }
         }
 

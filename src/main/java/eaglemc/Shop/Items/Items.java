@@ -1,9 +1,10 @@
-package eaglemc.Shop;
+package eaglemc.Shop.Items;
 
-import eaglemc.Perks;
-import eaglemc.Trails;
-import eaglemc.Utils.GlowEnchantment;
-import eaglemc.Utils.UPlayer;
+import eaglemc.enums.DeathCry;
+import eaglemc.enums.Perks;
+import eaglemc.enums.Trails;
+import eaglemc.Utils.others.GlowEnchantment;
+import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -15,8 +16,7 @@ public class Items {
 
 
 
-    public ItemStack getShopPerk(UPlayer p,int id){
-        Perks perk = Perks.fromId(id);
+    public ItemStack getShopPerk(UPlayer p,Perks perk){
         ItemStack item =perk.getPerkItem();
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
@@ -29,7 +29,7 @@ public class Items {
             GlowEnchantment glowEnchantment = new GlowEnchantment(70);
             meta.addEnchant(glowEnchantment,1,true);
         }
-        else if(p.getPlayerPerks().contains(id)){
+        else if(p.getPlayerPerks().contains(perk)){
             lore.add(main.color("&aClick To Select!"));
         }else {
             lore.add(main.color("&7Cost: &6" +perk.getPrice()));
@@ -76,7 +76,28 @@ public class Items {
 
         return item;
     }
+    public ItemStack getDeathCry(DeathCry dc, UPlayer p) {
+        ItemStack item = new ItemStack(dc.getMaterial());
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(dc.getDisplayName());
+        ArrayList<String> lore = dc.getLore();
+        lore.add(" ");
+        if(p.getSelectedDeathCry().equals(dc)){
+            lore.add(main.color("&aAlready Selected"));
+            GlowEnchantment glowEnchantment = new GlowEnchantment(70);
+            meta.addEnchant(glowEnchantment,1,true);
+        }
+        else if(p.getDeathCries().contains(dc)){
+            lore.add(main.color("&aClick To Select!"));
+        }else {
+            lore.add(main.color("&7Cost: &6" +dc.getPrice()));
+            lore.add(main.color("&eClick To Purchase !"));
+        }
+        meta.setLore(lore);
+        item.setItemMeta(meta);
 
+        return item;
+    }
 
     public ItemStack getPerkInSlot(UPlayer p,int slot){
         Perks perks = p.getPerkInSlot(slot);
@@ -98,7 +119,8 @@ public class Items {
     }
 
 
-    public ItemStack BattleCry(){
+
+    public ItemStack GoBack(){
         ItemStack item = new ItemStack(Material.ARROW);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(main.color("&e&lGo Back ⬅"));
@@ -109,13 +131,11 @@ public class Items {
         item.setItemMeta(meta);
         return item;
     }
-    public ItemStack GoBack(){
-        ItemStack item = new ItemStack(Material.ARROW);
+    public ItemStack BattleCry(){
+        ItemStack item = new ItemStack(Material.NOTE_BLOCK);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(main.color("&e&lGo Back ⬅"));
+        meta.setDisplayName(main.color("&e&lDeath Cry"));
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(" ");
-        lore.add(main.color("&7Go back to the main menu"));
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
@@ -188,8 +208,20 @@ public class Items {
         meta.setDisplayName(main.color("&c&lRemove Selected Trail"));
         ArrayList<String> lore = new ArrayList<>();
         lore.add(" ");
-        lore.add(main.color("&7This will remove selected"));
-        lore.add(main.color("&7in the current slot"));
+        lore.add(main.color("&7This will remove your "));
+        lore.add(main.color("&7selected Trail"));
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+    public ItemStack ClearDeathCry() {
+        ItemStack item = new ItemStack(Material.BARRIER);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(main.color("&c&lRemove Selected DeathCry"));
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(" ");
+        lore.add(main.color("&7This will remove your "));
+        lore.add(main.color("&7selected DeathCry "));
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;

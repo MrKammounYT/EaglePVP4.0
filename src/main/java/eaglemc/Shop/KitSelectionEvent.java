@@ -2,10 +2,11 @@ package eaglemc.Shop;
 
 import eaglemc.GameManager.GameManager;
 import eaglemc.Managers.KitManager;
-import eaglemc.Managers.PlayerManager;
-import eaglemc.Utils.Kit;
+import eaglemc.Shop.Items.Items;
+import eaglemc.Shop.Menus.Menu;
+import eaglemc.Utils.Holders.Kit;
 import eaglemc.Utils.ScoreBoard;
-import eaglemc.Utils.UPlayer;
+import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -46,10 +47,6 @@ public class KitSelectionEvent implements Listener {
         if(!e.getCurrentItem().getItemMeta().hasDisplayName())return;
         Player p = (Player) e.getWhoClicked();
         UPlayer up = gm.getPlayerManager().getPlayer(p);
-        if(e.getCurrentItem().getItemMeta().getDisplayName().equals(main.color("&e&lGo Back ⬅"))){
-            Menu.OpenMainShop(p,up);
-            p.playSound(p.getLocation(),Sound.CLICK,3.0f,2.0f);
-        }
         KitManager kitManager = gm.getKitManager();
         if(e.getView().getTitle().equals("Kits")){
             e.setCancelled(true);
@@ -76,8 +73,7 @@ public class KitSelectionEvent implements Listener {
                         p.sendMessage(main.Prefix + main.color("&aYou have bought "+kits.getDisplayName()));
                         p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,5.0f);
                         Menu.OpenMainShop(p,up);
-                        ScoreBoard.refresh(up);
-
+                        ScoreBoard.create(p,up);
                         return;
                     }
                     if(up.getKit().equals(kits)){

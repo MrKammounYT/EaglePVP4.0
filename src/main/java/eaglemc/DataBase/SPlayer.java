@@ -24,7 +24,8 @@ public class SPlayer {
     private void createStatsDB(){
         try {
             PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS PVP (NAME VARCHAR(100),UUID VARCHAR(100),CUSTOMNAME VARCHAR(1000)," +
-                    "DEATHS INT(100),POINTS INT(100),KILLS INT(100),COINS INT(100),EXP INT(100),LEVEL INT(100),PRIMARY KEY (UUID))");
+                    "DEATHS INT(100),POINTS INT(100),KILLS INT(100),COINS INT(100),EXP INT(100),LEVEL INT(100)" +
+                    ",STRAIL int(1),SDEATHCRY int(1),PRIMARY KEY (UUID))");
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -64,6 +65,28 @@ public class SPlayer {
 
 
 
+    public void setSelectedTrail(String uuid,int TrailID){
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET STRAIL = ? WHERE UUID = ?");
+            ps.setInt(1,TrailID);
+            ps.setString( 2, uuid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setSelectedDeathCry(String uuid,int DeathCryID){
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET SDEATHCRY = ? WHERE UUID = ?");
+            ps.setInt(1,DeathCryID);
+            ps.setString( 2, uuid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public void addKill(String uuid) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET KILLS = KILLS + 1 WHERE UUID = ?");
@@ -123,6 +146,36 @@ public class SPlayer {
             e.printStackTrace();
         }
         return kills;
+    }
+    public int getSelectedTrail(String uuid) {
+        int id = 0;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT STRAIL FROM PVP WHERE UUID = ?");
+            ps.setString(1, uuid);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("STRAIL");
+            }
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+    public int getSelectedDeathCry(String uuid) {
+        int id = 0;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT SDEATHCRY FROM PVP WHERE UUID = ?");
+            ps.setString(1, uuid);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("SDEATHCRY");
+            }
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
     }
     public String  getCustomName(Player p){
         String customName ="";

@@ -1,7 +1,7 @@
 package eaglemc.PerkEffect;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Perks;
+import eaglemc.enums.Perks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +20,7 @@ public class Berserker implements Listener {
             Player p = (Player)e.getDamager();
             if(pm.getPlayer(p).getSlots().containsValue(Perks.BERSERKER)){
                 if(p.getHealth() <=  3){
-                    e.setDamage(e.getFinalDamage() * 1.5);
+                    e.setDamage(e.getFinalDamage() * 2);
                     p.playSound(p.getLocation(), Sound.BLAZE_DEATH,3.0f,2.0f);
 
                 }

@@ -1,7 +1,7 @@
 package eaglemc.PerkEffect;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Perks;
+import eaglemc.enums.Perks;
 import eaglemc.pvp.main;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -31,9 +31,9 @@ public class GoldenHead implements Listener {
                 if(!p.getItemInHand().hasItemMeta())return;
                 if(p.getItemInHand().getItemMeta().getDisplayName().equals(main.color(Perks.GOLDEN_HEAD.getPerkName().replace(main.color("Perk"),"")))){
                     p.playSound(p.getLocation(), Sound.EAT,3.0f,1.2f);
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION,120,1));
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,20,1));
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,40,1));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION,120,0));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,20,0));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,40,0));
                     pm.getPlayer(p).setGoldenHead(false);
                     p.setItemInHand(null);
                 }

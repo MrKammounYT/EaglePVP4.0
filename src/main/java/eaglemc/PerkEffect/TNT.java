@@ -1,15 +1,15 @@
 package eaglemc.PerkEffect;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.Perks;
+import eaglemc.enums.Perks;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class TNT implements Listener {
 
@@ -26,14 +26,17 @@ public class TNT implements Listener {
         if (e.getBlockPlaced() == null || e.getBlockPlaced().getType() != Material.TNT)
             return;
         if(!pm.getPlayer(e.getPlayer()).getSlots().containsValue(Perks.TNT))return;
+        e.getPlayer().getInventory().remove(new ItemStack(Material.TNT));
         e.getBlockPlaced().setType(Material.AIR);
-        Entity tnt = e.getPlayer().getWorld().spawn(e.getBlockPlaced().getLocation(), TNTPrimed.class);
-        ((TNTPrimed)tnt).setFuseTicks(2 * 20);
+        TNTPrimed tnt = e.getPlayer().getWorld().spawn(e.getBlockPlaced().getLocation(), TNTPrimed.class);
+        tnt.setFuseTicks(2 * 20);
     }
   @EventHandler
-    public void onBlockExplode(BlockExplodeEvent e) {
-        e.blockList().clear();
-        e.setCancelled(true);
+    public void onBlockExplode(EntityExplodeEvent e) {
+      if (e.getEntity() instanceof TNTPrimed) {
+          e.blockList().clear();
+      }
+
     }
 
 

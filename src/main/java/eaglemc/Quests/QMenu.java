@@ -1,8 +1,8 @@
 package eaglemc.Quests;
 
 import eaglemc.Managers.QuestManager;
-import eaglemc.Utils.Quest;
-import eaglemc.Utils.UPlayer;
+import eaglemc.Utils.Holders.Quest;
+import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

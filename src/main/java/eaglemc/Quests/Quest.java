@@ -1,20 +1,14 @@
 package eaglemc.Quests;
 
 import eaglemc.GameManager.GameManager;
-import eaglemc.Managers.PlayerManager;
-import eaglemc.Managers.QuestManager;
-import eaglemc.Shop.Items;
-import eaglemc.Utils.UPlayer;
-import eaglemc.Utils.Utils;
-import eaglemc.pvp.main;
-import org.bukkit.Bukkit;
+import eaglemc.Utils.Holders.UPlayer;
+import eaglemc.Utils.Holders.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.Inventory;
 
 public class Quest implements Listener {
     private GameManager gm;
