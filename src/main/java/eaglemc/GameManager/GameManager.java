@@ -39,19 +39,34 @@ public class GameManager {
 
     public GameManager(main main){
         configManager = new ConfigManager(main.getConfig());
-               DBManager = new DBManager(configManager.getConnectionInfo().get("Address"),
-                        configManager.getConnectionInfo().get("Username"),
-                        configManager.getConnectionInfo().get("Password"),
-                        configManager.getConnectionInfo().get("Database"),
-                        configManager.getConnectionInfo().get("JDBC_CONNECTION_STRING"));
-                if(!DBManager.isConnected()){
-                    Bukkit.getServer().getPluginManager().disablePlugin(main);
-                    return;
-                }
-                kitManager = new KitManager();
-                questManager = new QuestManager(main);
-                playerManager = new PlayerManager(this);
-                LoadPvP(main);
+                new BukkitRunnable(){
+
+                    @Override
+                    public void run() {
+                        DBManager = new DBManager(configManager.getConnectionInfo().get("Address"),
+                                configManager.getConnectionInfo().get("Username"),
+                                configManager.getConnectionInfo().get("Password"),
+                                configManager.getConnectionInfo().get("Database"),
+                                configManager.getConnectionInfo().get("JDBC_CONNECTION_STRING"));
+                        if(!DBManager.isConnected()){
+                            return;
+                        }
+                        new BukkitRunnable(){
+
+                            @Override
+                            public void run() {
+                                kitManager = new KitManager();
+                                questManager = new QuestManager(main);
+                                playerManager = new PlayerManager(main.getGameManager());
+                                LoadPvP(main);
+
+                            }
+                        }.runTask(main);
+                    }
+                }.runTaskAsynchronously(main);
+
+
+
 
     }
 
@@ -78,6 +93,8 @@ public class GameManager {
         pm.registerEvents(new Flint(playerManager),main);
         pm.registerEvents(new SelectionEvent(playerManager),main);
         pm.registerEvents(new PurchaseEvent(playerManager),main);
+        pm.registerEvents(new Strength(playerManager),main);
+        pm.registerEvents(new Fix(),main);
         Weather();
         LeaderBoardUpdate leaderBoardUpdate = new LeaderBoardUpdate(this,main.getConfig());
         leaderBoardUpdate.runTaskTimer(main,0,20);

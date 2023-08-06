@@ -18,6 +18,8 @@ public class Chat implements Listener {
     public void PlayerChatEvent(AsyncPlayerChatEvent e)
     {
         UPlayer up = gameManager.getPlayerManager().getPlayer(e.getPlayer());
-        e.setFormat(up.getCustomName() +  " §7» " + EmojiUtils.turnToEmoji(e.getMessage()));
+        String msg = e.getMessage().replace("%","");
+
+        e.setFormat(up.getCustomName() +  " §7» " + EmojiUtils.turnToEmoji(msg));
     }
 }

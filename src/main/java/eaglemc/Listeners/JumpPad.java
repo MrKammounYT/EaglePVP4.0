@@ -20,7 +20,6 @@ public class JumpPad implements Listener {
 
     @EventHandler
     public void JumpPadLaunch(PlayerMoveEvent e){
-
         if (e.getTo().getBlock().getType() == Material.GOLD_PLATE) {
             if(e.getPlayer().getGameMode() != GameMode.SURVIVAL)return;
             Player p = e.getPlayer();
@@ -28,6 +27,7 @@ public class JumpPad implements Listener {
             Vector v = p.getLocation().getDirection().clone().normalize();
             v.multiply(2);
             v.setY(0.8D);
+            v.setX(-5);
             p.setVelocity(v);
         }
     }

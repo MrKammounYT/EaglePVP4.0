@@ -1,5 +1,6 @@
 package eaglemc.Utils.Holders;
 
+import eaglemc.Utils.ScoreBoard;
 import eaglemc.enums.DeathCry;
 import eaglemc.GameManager.GameManager;
 import eaglemc.enums.Perks;
@@ -73,7 +74,7 @@ public class UPlayer {
 
     private  DeathCry SelectedDeathCry;
 
-    private int flint = 2;
+    private int flint;
 
 
 
@@ -95,6 +96,7 @@ public class UPlayer {
         this.Trails = trails;
         this.SelectedDeathCry = selectedDC;
         this.DeathCries = DC;
+        flint = 1;
         for(Kit kits: manager.getKitManager().getKits().values()){
             if(kits.getPermission().equals("noperm")){
                 setKit(kits);
@@ -102,7 +104,6 @@ public class UPlayer {
             }
             if(p.hasPermission(kits.getPermission())){
                 setKit(kits);
-
             }
         }
                 p.teleport(LocationAPI.getLocation("spawn"));
@@ -145,27 +146,43 @@ public class UPlayer {
     }
 
 
-
     public int getFlint() {
         return flint;
     }
 
-    public void addFlint(int flint,Player p) {
-        this.flint +=flint;
+    public void setFlint(int flint) {
+        this.flint = flint;
+    }
+
+    public boolean canUseFlint(){
+        return flint > 0;
+    }
+
+    public void addFlint(Player p) {
+        this.flint +=1;
         updateFlint(p);
 
 
     }
-    public  void removeFlint(int flint,Player p) {
-        this.flint -=flint;
+    public  void removeFlint(Player p) {
+        this.flint -=1;
         updateFlint(p);
     }
+    private void updateFlint(Player p){
+        int slot = getFlintSlot(p);
+        if(slot == -1)return;
+        ItemStack item = p.getInventory().getItem(slot);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(main.color("&6Charge: &e" + flint));
+        item.setItemMeta(meta);
+        p.getInventory().setItem(slot, item);
+    }
+
     private int getFlintSlot(Player p){
         for(int i=0;i<p.getInventory().getSize();i++){
             if(p.getInventory().getItem(i) ==null)continue;
             if(p.getInventory().getItem(i).getType() == Material.FLINT_AND_STEEL){
                 return i;
-
             }
         }
         return -1;
@@ -191,15 +208,6 @@ public class UPlayer {
         return dailyXP;
     }
 
-    private void updateFlint(Player p){
-        int slot = getFlintSlot(p);
-        if(slot == -1)return;
-        ItemStack item = p.getInventory().getItem(slot);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(main.color("&6Charge: &e" + flint));
-        item.setItemMeta(meta);
-        p.getInventory().setItem(slot, item);
-    }
 
 
     public ArrayList<eaglemc.enums.Trails> getTrails() {
@@ -216,6 +224,10 @@ public class UPlayer {
 
     public String getRankColor() {
         return rankColor;
+    }
+
+    public String getColoredName(Player p){
+        return getRankColor() + p.getDisplayName();
     }
 
 
@@ -333,6 +345,7 @@ public class UPlayer {
         }
         if(!levelup)return;
         p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,1.8f);
+        ScoreBoard.create(p,this);
 
     }
 

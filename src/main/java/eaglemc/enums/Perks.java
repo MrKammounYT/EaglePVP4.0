@@ -37,18 +37,22 @@ public enum Perks {
         if (id == 1) {
             lore.add(main.color("&7Give you a TnT That you can use to blow"));
             lore.add(main.color("&7up your enemies"));
+            lore.add(main.color("  "));
+            lore.add(main.color("&eNote: &7You get This Item Every 5 Kills"));
         } else if (id == 2) {
             lore.add(main.color("&7This perk will give you a Golden Head which can "));
             lore.add(main.color("&7help you regenerate your health when consumed."));
         } else if (id == 3) {
             lore.add(main.color("&7Gives you &cStrength I &7for &c5 &7seconds"));
             lore.add(main.color("&7which can help you in serious situation."));
+            lore.add(main.color("  "));
+            lore.add(main.color("&eNote: &7You get This Item Every 5 Kills"));
         } else if (id == 4) {
             lore.add(main.color("&7Heal &c0.2❤ &7on hit. Tripled on arrow crit."));
             lore.add(main.color("&cRegen I (8s) &7on kill."));
         } else if (id == 5) {
-            lore.add(main.color("&7Pull yourself towards the target when you"));
-            lore.add(main.color("&7hit them with a projectile."));
+            lore.add(main.color("&750% to Pull yourself towards the target"));
+            lore.add(main.color("&7when you hit them with a projectile."));
         } else if (id == 6) {
             lore.add(main.color("&7Deal increased damage when your"));
             lore.add(main.color("&7health is below &c2.0❤"));
@@ -119,9 +123,9 @@ public enum Perks {
             case GOLDEN_HEAD:
                 return Material.GOLDEN_APPLE;
             case STRENGTH:
-                return Material.DIAMOND_SWORD;
-            case Vampire:
                 return Material.REDSTONE;
+            case Vampire:
+                return Material.REDSTONE_ORE;
             case GRAPPLER:
                 return Material.CARROT_STICK;
             case BERSERKER:

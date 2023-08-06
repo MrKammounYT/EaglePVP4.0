@@ -29,7 +29,7 @@ public class EmojiUtils {
 
     public static String turnToEmoji(String message) {
         for (String emoticon : allEmojis.keySet()) {
-            if (!message.toLowerCase().contains(emoticon.toLowerCase())) continue;
+            if (!message.toLowerCase().replace("§","").contains(emoticon.toLowerCase())) continue;
             message = main.color(message.replace(emoticon,allEmojis.get(emoticon)));
             return message;
         }

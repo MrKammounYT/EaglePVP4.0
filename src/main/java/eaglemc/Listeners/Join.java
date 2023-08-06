@@ -23,8 +23,5 @@ public class Join implements Listener {
         e.setJoinMessage(null);
         Player p = e.getPlayer();
         gm.getPlayerManager().createPlayer(e.getPlayer());
-        LuckPerms api = LuckPermsProvider.get();
-        User user = api.getUserManager().getUser(p.getName());
-        user.data().add(Node.builder("noperm").build());
     }
 }

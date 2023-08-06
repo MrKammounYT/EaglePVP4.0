@@ -166,6 +166,9 @@ public class KitManager {
                 if (mt == Material.FLINT_AND_STEEL) {
                     meta.setDisplayName(main.color("&6Charge: &e1"));
                 }
+                if (mt == Material.ARROW) {
+                    meta.spigot().setUnbreakable(false);
+                }
                 List<String> enchants = config.getStringList(slot + "enchants");
                 if (enchants != null) {
                     for (String s1 : enchants) {

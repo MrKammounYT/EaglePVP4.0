@@ -35,10 +35,11 @@ public class SPlayer {
     public void addPlayer(String name, UUID uuid){
         try {
             if(PlayerExists(uuid))return;
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO PVP (NAME,UUID,LEVEL) VALUES (?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO PVP (NAME,UUID,POINTS,LEVEL) VALUES (?,?,?,?)");
             ps.setString(1,name);
             ps.setString(2,uuid.toString());
-            ps.setInt(3,1);
+            ps.setInt(3,200);
+            ps.setInt(4,1);
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {

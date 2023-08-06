@@ -6,16 +6,27 @@ import eaglemc.Utils.ScoreBoard;
 import eaglemc.Utils.Title;
 import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 public class Death implements Listener {
 
@@ -33,6 +44,7 @@ public class Death implements Listener {
         e.setDeathMessage(null);
         e.getDrops().clear();
         e.setDroppedExp(0);
+        killStreaks.remove(e.getEntity().getUniqueId());
         if(e.getEntity().getKiller() != null) {
         UPlayer up = gm.getPlayerManager().getPlayer(e.getEntity());
         Player p = e.getEntity();
@@ -45,32 +57,40 @@ public class Death implements Listener {
         if(uk.getSlots().containsValue(Perks.DOUBLE_XP)){
             exp *=2;
         }
-        uk.addKillStreak();
-            ScoreBoard.create(p,up);
-            ScoreBoard.create(k,uk);
+        ScoreBoard.create(p,up);
+        ScoreBoard.create(k,uk);
         DecimalFormat df = new DecimalFormat("##.##");
         String health = df.format(k.getHealth() / 2.0D);
-        Title.sendActionBar(k,main.color("&a&lKilled "+p.getDisplayName()+" with "+health + " &c❤ left"));
-        Title.sendActionBar(p,main.color("&c&lKilled By "+k.getDisplayName()+" with "+health + " &c❤ left"));
-        k.sendMessage(main.Prefix + main.color("&a&lKILL! &7on "+p.getDisplayName() + " &b+"+exp+"XP" +" &6+"+coins+"✪"));
+        Title.sendActionBar(k,main.color("&a&lKilled "+up.getColoredName(p)+" with "+health + " &c❤ left"));
+        Title.sendActionBar(p,main.color("&c&lKilled By "+uk.getColoredName(k)+" with "+health + " &c❤ left"));
         k.setHealth(20);
+        k.getInventory().addItem(new ItemStack(Material.ARROW,2));
         up.setDeathLocation(k.getLocation());
-        p.sendMessage(main.Prefix + main.color("&c&lDEATH! &7by "+k.getDisplayName()));
-        up.addDeaths(1);
-        givePerk(k,uk);
+        p.sendMessage(main.Prefix + main.color("&c&lDEATH! &7by "+uk.getColoredName(k)));
         int points = (up.getPoints()*3)/100;
         if(points <= 0){
             points = getRandomInt(2,10);
         }
-        uk.addPoints(points);
-        uk.addFlint(1,p);
-        if(up.getPoints() - points >= 0){
-            up.removePoints(points);
+        if(up.getKillStreaks() != 0 && up.getKillStreaks() % 5 == 0){
+            coins = coins + ((coins * 20)/100);
+            exp = exp + ((exp * 20) /100);
+            k.sendMessage(main.Prefix + main.color("&a+20% &eCoins and Exp For Killing &r"+up.getColoredName(p)+ " &eWith &c"+up.getKillStreaks() + " &eKillStreaks"));
         }
-        uk.addexp(k,exp);
+        k.sendMessage(main.Prefix + main.color("&a&lKILL! &7on "+up.getColoredName(p)+ " &b+"+exp+"XP" +" &6+"+coins+"✪"));
+        uk.addKillStreak();
+        uk.addPoints(points);
+        uk.addFlint(k);
         uk.addKills(1);
+        uk.addexp(k,exp);
         uk.addCoins(coins);
+        givePerk(k,uk);
+        if(up.getPoints() - points >= 0){
+          up.removePoints(points);
+        }
+        up.addDeaths(1);
+        up.clearKillStreaks();
         playDeathCry(up,k);
+        p.setGameMode(GameMode.SPECTATOR);
             for(Player damagers : up.getUassist().getDamagers().keySet()){
                 if(damagers.getName().equals(k.getName()))continue;
                 int percentage =  up.getUassist().getDamagePercentage(damagers);
@@ -83,8 +103,12 @@ public class Death implements Listener {
                 }
                 Title.sendActionBar(damagers,main.color("&b&lASSIST &a"+percentage +"% "+"&e+"+newpoints+"✮" +" &6+"+newcoins+"✪" ));
                 damagers.playSound(damagers.getLocation(), Sound.NOTE_BASS_GUITAR,2.0f,3.0f);
-                damagers.sendMessage(main.Prefix + main.color("&b&lASSIST! &7on "+p.getDisplayName() + " &b+"+newexp+"XP" +" &6+"+newcoins+"✪"));
-                damagers.setHealth(damagers.getHealth() + ((damagers.getMaxHealth()*percentage)/100));
+                damagers.sendMessage(main.Prefix + main.color("&b&lASSIST! &7on "+up.getColoredName(p)+ " &b+"+newexp+"XP" +" &6+"+newcoins+"✪"));
+                if(damagers.getHealth() + ((damagers.getMaxHealth()*percentage)/100) >= 20.00){
+                    damagers.setHealth(20);
+                }else {
+                    damagers.setHealth(damagers.getHealth() + ((damagers.getMaxHealth()*percentage)/100));
+                }
                 udamager.addexp(damagers,newexp);
                 udamager.addPoints(newpoints);
                 udamager.addCoins(newcoins);
@@ -102,8 +126,8 @@ public class Death implements Listener {
         UPlayer up = gm.getPlayerManager().getPlayer(e.getEntity());
         Player p = e.getEntity();
         up.getUassist().clearDamagers();
-        up.clearKillStreaks();
         if(e.getEntity().getKiller() != null)return;
+        up.clearKillStreaks();
         p.sendMessage(main.Prefix + main.color("&c&lDEATH!"));
         up.addDeaths(1);
         up.setDeathLocation(p.getLocation());
@@ -130,14 +154,51 @@ public class Death implements Listener {
             p.getInventory().addItem(Perks.GOLDEN_HEAD.getPerkUsableItem());
             up.setGoldenHead(true);
         }
-        else if(up.getSlots().containsValue(Perks.TNT)){
+        else if(up.getSlots().containsValue(Perks.TNT) && up.getKillStreaks() %5 == 0){
             p.getInventory().addItem(Perks.TNT.getPerkUsableItem());
         }
-        else if(up.getSlots().containsValue(Perks.STRENGTH)){
-            p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE,100,1));
+        else if(up.getSlots().containsValue(Perks.STRENGTH) && up.getKillStreaks() %5 == 0){
+            p.getInventory().addItem(Perks.STRENGTH.getPerkUsableItem());
         }
         else if(up.getSlots().containsValue(Perks.Vampire)){
-            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,160,1));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,160,0));
         }
+        announceStreak(p,up);
+    }
+
+    private final ArrayList<UUID> killStreaks = new ArrayList<>();
+
+    private void announceStreak(Player p ,UPlayer up){
+        if(killStreaks.contains(p.getUniqueId())){
+            if(up.getKillStreaks() != 0 &&up.getKillStreaks() %5  == 0 ){
+                Bukkit.broadcastMessage(main.Prefix + main.color(up.getColoredName(p)+ " &eIs on &c"+up.getKillStreaks() + " &eKillStreaks"));
+            }
+            return;
+        }
+        if(up.getKillStreaks() != 0 &&up.getKillStreaks() %5  == 0){
+            killStreaks.add(p.getUniqueId());
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    if(!killStreaks.contains(p.getUniqueId())){
+                        cancel();
+                    }
+                    Item item = p.getWorld().dropItemNaturally(p.getLocation().add(0,2,0),new ItemStack(Material.GOLD_NUGGET));
+                    item.setPickupDelay(-1);
+                    Item item2 = p.getWorld().dropItemNaturally(p.getLocation().add(0,2,0),new ItemStack(Material.GOLD_INGOT));
+                    item2.setPickupDelay(-1);
+
+                    new BukkitRunnable(){
+                        @Override
+                        public void run() {
+                            item.remove();
+                            item2.remove();
+                        }
+                    }.runTaskLater(main.getInstance(),18);
+                }
+            }.runTaskTimer(main.getInstance(),0,20);
+
+        }
+
     }
 }

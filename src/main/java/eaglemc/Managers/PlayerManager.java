@@ -5,6 +5,7 @@ import eaglemc.DataBase.SPerks;
 import eaglemc.DataBase.SPlayer;
 import eaglemc.DataBase.STrails;
 import eaglemc.Utils.ScoreBoard;
+import eaglemc.Utils.others.LocationAPI;
 import eaglemc.enums.DeathCry;
 import eaglemc.GameManager.GameManager;
 import eaglemc.enums.Perks;
@@ -38,6 +39,7 @@ public class PlayerManager {
 
     private final SDeathCry sDeathCry;
 
+
     public PlayerManager(GameManager gm){
 
         this.dbManager = gm.getDBManager();
@@ -57,8 +59,12 @@ public class PlayerManager {
     public void createPlayer(Player p){
         if(isPlayer(p)) {
             ScoreBoard.create(p,getPlayer(p));
+            players.get(p.getUniqueId()).setFlint(1);
+            getPlayer(p).getKit().wear(p);
+            p.teleport(LocationAPI.getLocation("spawn"));
             return;
         }
+        try {
             new BukkitRunnable(){
 
                 @Override
@@ -69,12 +75,13 @@ public class PlayerManager {
                     players.put(p.getUniqueId(),new UPlayer(p,gm,p.getUniqueId(),sPlayer.getKills(uuid),sPlayer.getDeaths(uuid),
                             sPlayer.getPoints(uuid),sPlayer.getCoins(uuid),sPlayer.getExperience(uuid),sPlayer.getLevel(uuid),getRankColor(p)
                             ,getPerks(p),getSlots(p),getTrails(p),getSelectedTrail(p),getDeathCry(p),getSelectedDeathCry(p)));
-                    if(!p.hasPlayedBefore()){
-                        getPlayer(p).addPoints(100);
-                    }
                 }
     }.runTaskAsynchronously(main.getInstance());
+        }catch (Exception e){
+            p.kickPlayer("Please try and rejoin the game");
+            e.printStackTrace();
 
+        }
 
 
 
@@ -152,6 +159,9 @@ public class PlayerManager {
             }
             else if(user.getPrimaryGroup().equalsIgnoreCase("moderator")) {
                 return "&c";
+            }
+            else if(user.getPrimaryGroup().equalsIgnoreCase("jrmod")) {
+                return "&2";
             }
             else if(user.getPrimaryGroup().equalsIgnoreCase("Helper")) {
                 return "&a";

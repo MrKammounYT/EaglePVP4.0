@@ -22,7 +22,7 @@ public class ScoreBoard {
                 main.color("&fCoins: &a"+up.getCoins()),
                 main.color("&fKillStreaks: &a"+up.getKillStreaks()),
                 "   ",
-                main.color("&eEaglemc.net")
+                main.color("&eplay.EagleMc.net")
         );
     }
 

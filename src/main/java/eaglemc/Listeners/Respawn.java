@@ -20,21 +20,18 @@ public class Respawn implements Listener {
     }
     @EventHandler
     public void onRespawnEvent(PlayerRespawnEvent e){
-
         Player p = e.getPlayer();
-        p.setGameMode(GameMode.SPECTATOR);
-        p.setHealth(20);
-        e.setRespawnLocation(gm.getPlayerManager().getPlayer(p).getDeathLocation());
-        Title.sendTitle(p, main.color("&cYou Died"),main.color("&fRespawning in 3 seconds"),40);
         new BukkitRunnable(){
             @Override
             public void run() {
                 gm.getPlayerManager().getPlayer(p).wearKit(p);
                 p.teleport(LocationAPI.getLocation("spawn"));
                 p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT,3.0f,4.0f);
+                p.setHealth(20);
+                p.setFoodLevel(20);
                 p.setGameMode(GameMode.SURVIVAL);
             }
-        }.runTaskLater(main.getInstance(),60);
+        }.runTask(main.getInstance());
 
     }
 

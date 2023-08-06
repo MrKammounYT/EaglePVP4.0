@@ -21,6 +21,7 @@ public class Vampire implements Listener {
             if(((Arrow) e.getDamager()).getShooter() instanceof Player){
                 Player p = (Player) ((Arrow) e.getDamager()).getShooter();
                 if(pm.getPlayer(p).getSlots().containsValue(Perks.Vampire)){
+                    if(p.getHealth() + 0.6 > 20.0)return;
                     p.setHealth(p.getHealth() + 0.6);
                 }
             }
@@ -28,6 +29,7 @@ public class Vampire implements Listener {
         if(e.getDamager() instanceof  Player){
             Player p = (Player) e.getDamager();
             if(pm.getPlayer(p).getSlots().containsValue(Perks.Vampire)){
+                if(p.getHealth() + 0.6 > 20.0)return;
                 p.setHealth(p.getHealth() + 0.2);
             }
         }

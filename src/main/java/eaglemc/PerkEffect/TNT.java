@@ -26,7 +26,11 @@ public class TNT implements Listener {
         if (e.getBlockPlaced() == null || e.getBlockPlaced().getType() != Material.TNT)
             return;
         if(!pm.getPlayer(e.getPlayer()).getSlots().containsValue(Perks.TNT))return;
-        e.getPlayer().getInventory().remove(new ItemStack(Material.TNT));
+        if(e.getItemInHand().getAmount()<= 1){
+        e.getPlayer().getInventory().remove(Perks.TNT.getPerkUsableItem());
+        }else{
+            e.getItemInHand().setAmount(e.getItemInHand().getAmount()-1);
+        }
         e.getBlockPlaced().setType(Material.AIR);
         TNTPrimed tnt = e.getPlayer().getWorld().spawn(e.getBlockPlaced().getLocation(), TNTPrimed.class);
         tnt.setFuseTicks(2 * 20);
