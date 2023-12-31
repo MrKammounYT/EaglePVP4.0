@@ -48,7 +48,7 @@ public class User implements CommandExecutor {
                     int kills = uPlayer.getKills();
                     double kdr = deaths != 0 ? (double) kills / deaths : kills;
                     p.sendMessage(main.color("&6====== &eStats &6====="));
-                    p.sendMessage(main.color("&eName: " + uPlayer.getCustomName()));
+                    p.sendMessage(main.color("&eName: " + uPlayer.getCustomName(Bukkit.getPlayer(t))));
                     p.sendMessage(main.color("&eKills: &7" + uPlayer.getKills()));
                     p.sendMessage(main.color("&eDeaths: &7" + uPlayer.getDeaths()));
                     p.sendMessage(main.color("&eK/D: &7" + kdr));
@@ -67,7 +67,7 @@ public class User implements CommandExecutor {
                 int kills = uPlayer.getKills();
                 double kdr = deaths != 0 ? (double) kills / deaths : kills;
                 p.sendMessage(main.color("&6====== &eStats &6====="));
-                p.sendMessage(main.color("&eName: " + uPlayer.getCustomName()));
+                p.sendMessage(main.color("&eName: " + uPlayer.getCustomName(p)));
                 p.sendMessage(main.color("&eKills: &7" + uPlayer.getKills()));
                 p.sendMessage(main.color("&eDeaths: &7" + uPlayer.getDeaths()));
                 p.sendMessage(main.color("&eK/D: &7" + kdr));

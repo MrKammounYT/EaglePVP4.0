@@ -13,6 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
+import xyz.refinedev.phoenix.Phoenix;
+import xyz.refinedev.phoenix.SharedAPI;
+import xyz.refinedev.phoenix.profile.Profile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +62,7 @@ public class UPlayer {
 
     private boolean Build;
 
+
     private int dailyKills = 0;
     private int dailyPoints = 0;
     private int dailyDeaths = 0;
@@ -70,7 +74,6 @@ public class UPlayer {
 
     private Trails SelectedTrail;
 
-    private final String rankColor;
 
     private  DeathCry SelectedDeathCry;
 
@@ -80,7 +83,7 @@ public class UPlayer {
 
 
 
-    public UPlayer(Player p, GameManager manager, UUID uuid, int kills, int deaths, int points, int coins, int exp, int level, String rankColor, ArrayList<Perks> perks, HashMap<Integer, Perks> slots,
+    public UPlayer(Player p, GameManager manager, UUID uuid, int kills, int deaths, int points, int coins, int exp, int level, ArrayList<Perks> perks, HashMap<Integer, Perks> slots,
                    ArrayList<Trails> trails, Trails SelectedTrail, ArrayList<DeathCry> DC, DeathCry selectedDC){
         this.kills = kills;
         this.deaths= deaths;
@@ -89,7 +92,6 @@ public class UPlayer {
         this.exp = exp;
         this.level = level;
         this.p = Bukkit.getPlayer(uuid);
-        this.rankColor = rankColor;
         this.Perks = perks;
         this.slots = slots;
         this.SelectedTrail = SelectedTrail;
@@ -107,7 +109,6 @@ public class UPlayer {
             }
         }
                 p.teleport(LocationAPI.getLocation("spawn"));
-                p.setGameMode(GameMode.SURVIVAL);
                 p.setHealth(20);
                 p.setFoodLevel(20);
                 eaglemc.Utils.ScoreBoard.create(p,UPlayer.this);
@@ -222,14 +223,19 @@ public class UPlayer {
         return SelectedSlot;
     }
 
-    public String getRankColor() {
-        return rankColor;
+    public String getRankColor(Player p) {
+        return SharedAPI.getInstance().getProfileHandler().getProfile(p.getUniqueId()).getNameColor();
     }
+
+
 
     public String getColoredName(Player p){
-        return getRankColor() + p.getDisplayName();
+        return main.color(getRankColor(p) + p .getName());
     }
+    public String getCustomName(Player p){
+        return main.color(getStringLevel() + " "+getRankColor(p) + p.getName());
 
+    }
 
     public boolean HasGoldenHead() {
         return HasGoldenHead;
@@ -239,9 +245,7 @@ public class UPlayer {
         HasGoldenHead = hasGoldenHead;
     }
 
-    public String getCustomName(){
-        return main.color(getStringLevel() + " "+getRankColor()+p.getName());
-    }
+
 
     public ArrayList<Perks> getPlayerPerks(){
         return Perks;

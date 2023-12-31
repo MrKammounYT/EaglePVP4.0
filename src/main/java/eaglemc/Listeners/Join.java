@@ -1,10 +1,7 @@
 package eaglemc.Listeners;
 
 import eaglemc.GameManager.GameManager;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.node.Node;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class Join implements Listener {
 
-    private GameManager gm;
+    private final GameManager gm;
 
     public Join(GameManager gm){
         this.gm = gm;

@@ -20,6 +20,6 @@ public class Chat implements Listener {
         UPlayer up = gameManager.getPlayerManager().getPlayer(e.getPlayer());
         String msg = e.getMessage().replace("%","");
 
-        e.setFormat(up.getCustomName() +  " §7» " + EmojiUtils.turnToEmoji(msg));
+        e.setFormat(up.getCustomName(e.getPlayer()) +  " §7» " + EmojiUtils.turnToEmoji(msg));
     }
 }

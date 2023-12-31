@@ -8,10 +8,7 @@ import eaglemc.Utils.Holders.Kit;
 import eaglemc.Utils.ScoreBoard;
 import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.node.Node;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -19,6 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import xyz.refinedev.phoenix.SharedAPI;
+import xyz.refinedev.phoenix.rank.permission.ProfilePermission;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -90,10 +89,8 @@ public class KitSelectionEvent implements Listener {
         }
     }
     void addPermission(UUID uuid, String permission) {
-        LuckPerms api = LuckPermsProvider.get();
-        User user = api.getUserManager().getUser(uuid);
-        user.data().add(Node.builder(permission).build());
-        api.getUserManager().saveUser(user);
+        SharedAPI api = SharedAPI.getInstance();
+        api.getProfileHandler().getProfile(uuid).getPermissions().add(new ProfilePermission(permission,999999999));
     }
 
 }

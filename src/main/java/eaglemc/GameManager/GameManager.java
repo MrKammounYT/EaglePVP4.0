@@ -121,6 +121,10 @@ public class GameManager {
                 SPerks sPerks = DBManager.getsPerks();
                 STrails sTrails =DBManager.getsTrails();
         SDeathCry sDeathCry = DBManager.getsDeathCry();
+        new BukkitRunnable(){
+
+            @Override
+            public void run() {
                 for (UUID uuid : playerManager.getPlayers().keySet()){
                     UPlayer up = playerManager.getPlayers().get(uuid);
                     sPlayer.setCoins(uuid.toString(),up.getCoins());
@@ -129,7 +133,7 @@ public class GameManager {
                     sPlayer.setKill(uuid.toString(),up.getKills());
                     sPlayer.setExp(uuid.toString(),up.getExp());
                     sPlayer.setPoints(uuid.toString(),up.getPoints());
-                    sPlayer.setCustomName(uuid,up.getCustomName());
+                    sPlayer.setCustomName(uuid,up.getCustomName(up.getPlayer()));
                     for(Perks perks : up.getPlayerPerks()){
                         sPerks.addPerk(uuid,perks.getId());
                     }
@@ -147,6 +151,8 @@ public class GameManager {
 
                 }
 
+            }
+        }.runTaskAsynchronously(main);
     }
 
     public eaglemc.Managers.DBManager getDBManager() {

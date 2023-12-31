@@ -38,6 +38,7 @@ public class LeaderBoardUpdate extends BukkitRunnable {
         if(timer == 0){
             try {
                 UpdateLeaderBoard();
+                gm.SaveData(main.getInstance());
             }catch (Exception e){
                 e.printStackTrace();
             }
