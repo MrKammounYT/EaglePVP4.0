@@ -1,15 +1,13 @@
 package eaglemc.Managers;
 
-import eaglemc.DataBase.SDeathCry;
-import eaglemc.DataBase.SPerks;
-import eaglemc.DataBase.SPlayer;
-import eaglemc.DataBase.STrails;
+import eaglemc.DataBase.*;
 import eaglemc.Utils.ScoreBoard;
+import eaglemc.Utils.enums.KillStreakEffect;
 import eaglemc.Utils.others.LocationAPI;
-import eaglemc.enums.DeathCry;
+import eaglemc.Utils.enums.DeathCry;
 import eaglemc.GameManager.GameManager;
-import eaglemc.enums.Perks;
-import eaglemc.enums.Trails;
+import eaglemc.Utils.enums.Perks;
+import eaglemc.Utils.enums.Trails;
 import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
 
@@ -17,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import xyz.refinedev.phoenix.SharedAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +25,12 @@ public class PlayerManager {
 
     private final HashMap<UUID, UPlayer> players = new HashMap<UUID, UPlayer>();
 
-    final DBManager dbManager;
+    final DataBaseManager dbManager;
 
     private final GameManager gm;
     private final SPlayer sPlayer;
+
+    private final SKillStreaksEffect sKillStreaksEffect;
 
     private final SPerks sPerks;
 
@@ -48,6 +47,7 @@ public class PlayerManager {
         this.sPerks = dbManager.getsPerks();
         this.sTrails = dbManager.getsTrails();
         this.sDeathCry = dbManager.getsDeathCry();
+        this.sKillStreaksEffect = dbManager.getsKillStreaksEffect();
         ReloadPlayers();
     }
 
@@ -63,6 +63,7 @@ public class PlayerManager {
             players.get(p.getUniqueId()).setFlint(1);
             getPlayer(p).getKit().wear(p);
             p.teleport(LocationAPI.getLocation("spawn"));
+            p.spigot().setCollidesWithEntities(true);
             return;
         }
         try {
@@ -75,7 +76,8 @@ public class PlayerManager {
                     String uuid = p.getUniqueId().toString();
                     players.put(p.getUniqueId(),new UPlayer(p,gm,p.getUniqueId(),sPlayer.getKills(uuid),sPlayer.getDeaths(uuid),
                             sPlayer.getPoints(uuid),sPlayer.getCoins(uuid),sPlayer.getExperience(uuid),sPlayer.getLevel(uuid)
-                            ,getPerks(p),getSlots(p),getTrails(p),getSelectedTrail(p),getDeathCry(p),getSelectedDeathCry(p)));
+                            ,getPerks(p),getSlots(p),getTrails(p),getSelectedTrail(p),getDeathCry(p),getSelectedDeathCry(p)
+                            ,getKillStreaksEffect(p),getSelectedKillStreakEffect(p)));
                 }
     }.runTaskAsynchronously(main.getInstance());
         }catch (Exception e){
@@ -93,17 +95,28 @@ public class PlayerManager {
 
     }
 
+    private KillStreakEffect getSelectedKillStreakEffect(Player p) {
+        return KillStreakEffect.getKillStreakEffectByID(sPlayer.getSelectedKillStreakEffect(p.getUniqueId().toString()));
+
+    }
 
 
     private ArrayList<DeathCry> getDeathCry(Player p){
         ArrayList<DeathCry> list = new ArrayList<>();
-        for(int i=1;i<6;i++){
-            if(sDeathCry.HaveDeathCry(p.getUniqueId(),i)){
-                list.add(DeathCry.getDeathCryByID(i));
-            }
+        for(int id : sDeathCry.getDeathCryForPlayer(p.getUniqueId())){
+                list.add(DeathCry.getDeathCryByID(id));
         }
         return list;
     }
+
+    private ArrayList<KillStreakEffect> getKillStreaksEffect(Player p){
+        ArrayList<KillStreakEffect> list = new ArrayList<>();
+        for(int id : sKillStreaksEffect.getKillStreaksEffectForPlayer(p.getUniqueId())){
+            list.add(KillStreakEffect.getKillStreakEffectByID(id));
+        }
+        return list;
+    }
+
 
 
     private ArrayList<Trails> getTrails(Player p){

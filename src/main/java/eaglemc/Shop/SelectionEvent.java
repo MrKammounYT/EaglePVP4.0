@@ -1,12 +1,9 @@
 package eaglemc.Shop;
 
-import eaglemc.enums.DeathCry;
+import eaglemc.Utils.enums.*;
 import eaglemc.Managers.PlayerManager;
-import eaglemc.enums.Perks;
 import eaglemc.Shop.Menus.BuyMenu;
 import eaglemc.Shop.Menus.Menu;
-import eaglemc.enums.Trails;
-import eaglemc.enums.Type;
 import eaglemc.Utils.Inventory.SelectionInventory;
 import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
@@ -122,6 +119,36 @@ public class SelectionEvent implements Listener {
                             return;
                         }
                         up.setSelectedDeathCry(dc);
+                        p.playSound(p.getLocation(), Sound.ORB_PICKUP,3.0f,2.0f);
+                        p.closeInventory();
+                        Menu.OpenMainShop(p,up);
+
+                    }
+                }
+                else if(invType == Type.KillStreakEffect){
+                    if(e.getCurrentItem().getItemMeta().getDisplayName().equals(main.color("&c&lRemove Selected KillStreak effect"))){
+
+                        up.setSelectedKillStreakEffect(KillStreakEffect.none);
+                        p.closeInventory();
+                        p.playSound(p.getLocation(), Sound.ORB_PICKUP,3.0f,2.0f);
+                        Menu.OpenMainShop(p,up);
+                        return;
+                    }
+                    if(KillStreakEffect.getKillStreakEffectByDisplayName(e.getCurrentItem().getItemMeta().getDisplayName()) !=null){
+                        KillStreakEffect kse = KillStreakEffect.getKillStreakEffectByDisplayName(e.getCurrentItem().getItemMeta().getDisplayName());
+                        if(!up.getKillStreakEffects().contains(kse)){
+                            if(up.getCoins() < kse.getPrice()){
+                                p.sendMessage(main.Prefix+main.color("&cYou don't have enough coins to Buy this DeathCry"));
+                                return;
+                            }
+                            BuyMenu.OpenPurchaseMenu(p,kse);
+                            return;
+                        }
+                        if(up.getSelectedKillStreakEffect().equals(kse)){
+                            p.sendMessage(main.Prefix+main.color("&cThis DeathCry is already Selected"));
+                            return;
+                        }
+                        up.setSelectedKillStreakEffect(kse);
                         p.playSound(p.getLocation(), Sound.ORB_PICKUP,3.0f,2.0f);
                         p.closeInventory();
                         Menu.OpenMainShop(p,up);

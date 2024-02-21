@@ -1,18 +1,17 @@
 package eaglemc.GameManager;
 
-import eaglemc.DataBase.SDeathCry;
-import eaglemc.DataBase.SPerks;
-import eaglemc.DataBase.SPlayer;
-import eaglemc.DataBase.STrails;
+import eaglemc.DataBase.*;
+import eaglemc.Event.EventManager;
 import eaglemc.Listeners.*;
 import eaglemc.Managers.*;
 import eaglemc.PerkEffect.*;
 import eaglemc.Quests.Quest;
 import eaglemc.Runnables.LeaderBoardUpdate;
 import eaglemc.Shop.*;
-import eaglemc.enums.DeathCry;
-import eaglemc.enums.Perks;
-import eaglemc.enums.Trails;
+import eaglemc.Utils.enums.DeathCry;
+import eaglemc.Utils.enums.KillStreakEffect;
+import eaglemc.Utils.enums.Perks;
+import eaglemc.Utils.enums.Trails;
 import eaglemc.TrailsEffect.PlayEffect;
 import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
@@ -27,23 +26,31 @@ import java.util.UUID;
 public class GameManager {
 
 
-    private DBManager DBManager;
+    private DataBaseManager DBManager;
 
     private PlayerManager playerManager;
+    private SaveManager saveManager;
 
+    private EventManager eventManager;
     private KitManager kitManager;
 
     private final ConfigManager configManager;
 
+
     private QuestManager questManager;
+
+    private LeaderBoardUpdate leaderBoardUpdate;
 
     public GameManager(main main){
         configManager = new ConfigManager(main.getConfig());
-                new BukkitRunnable(){
+        this.saveManager = new SaveManager();
+        eventManager = new EventManager(this);
+
+        new BukkitRunnable(){
 
                     @Override
                     public void run() {
-                        DBManager = new DBManager(configManager.getConnectionInfo().get("Address"),
+                        DBManager = new DataBaseManager(configManager.getConnectionInfo().get("Address"),
                                 configManager.getConnectionInfo().get("Username"),
                                 configManager.getConnectionInfo().get("Password"),
                                 configManager.getConnectionInfo().get("Database"),
@@ -94,10 +101,16 @@ public class GameManager {
         pm.registerEvents(new SelectionEvent(playerManager),main);
         pm.registerEvents(new PurchaseEvent(playerManager),main);
         pm.registerEvents(new Strength(playerManager),main);
-        pm.registerEvents(new Fix(),main);
+        pm.registerEvents(eventManager,main);
+        pm.registerEvents(new Quit(this),main);
+
         Weather();
-        LeaderBoardUpdate leaderBoardUpdate = new LeaderBoardUpdate(this,main.getConfig());
+        leaderBoardUpdate = new LeaderBoardUpdate(this,main.getConfig());
         leaderBoardUpdate.runTaskTimer(main,0,20);
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
     }
 
     private void Weather() {
@@ -112,6 +125,15 @@ public class GameManager {
             world.setGameRuleValue("doMobSpawning", "false");
         }
     }
+
+    public LeaderBoardUpdate getLeaderBoardUpdate() {
+        return leaderBoardUpdate;
+    }
+
+    public SaveManager getSaveManager() {
+        return saveManager;
+    }
+
     public QuestManager getQuestManager() {
         return questManager;
     }
@@ -120,12 +142,10 @@ public class GameManager {
                 SPlayer sPlayer = DBManager.getSPlayer();
                 SPerks sPerks = DBManager.getsPerks();
                 STrails sTrails =DBManager.getsTrails();
-        SDeathCry sDeathCry = DBManager.getsDeathCry();
-        new BukkitRunnable(){
+            SDeathCry sDeathCry = DBManager.getsDeathCry();
+            SKillStreaksEffect sKillStreaksEffect = DBManager.getsKillStreaksEffect();
 
-            @Override
-            public void run() {
-                for (UUID uuid : playerManager.getPlayers().keySet()){
+        for (UUID uuid : playerManager.getPlayers().keySet()){
                     UPlayer up = playerManager.getPlayers().get(uuid);
                     sPlayer.setCoins(uuid.toString(),up.getCoins());
                     sPlayer.setLevel(uuid.toString(),up.getLevel());
@@ -146,16 +166,17 @@ public class GameManager {
                     for(DeathCry deathCry : up.getDeathCries()){
                         sDeathCry.addDeathCry(uuid,deathCry.getId());
                     }
+                    for(KillStreakEffect killStreakEffect : up.getKillStreakEffects()){
+                        sKillStreaksEffect.addKillStreaksEffect(uuid,killStreakEffect.getId());
+                    }
                     sPlayer.setSelectedTrail(uuid.toString(),up.getSelectedTrail().getId());
                     sPlayer.setSelectedDeathCry(uuid.toString(),up.getSelectedDeathCry().getId());
+                    sPlayer.setSelectedKillStreakEffect(uuid.toString(),up.getSelectedKillStreakEffect().getId());
 
                 }
-
-            }
-        }.runTaskAsynchronously(main);
     }
 
-    public eaglemc.Managers.DBManager getDBManager() {
+    public DataBaseManager getDBManager() {
         return DBManager;
     }
 

@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="s6_test@195.201.83.92" uuid="950cd43b-cb3f-4715-ba93-554a19625824">
-      <driver-ref>mariadb</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mariadb://195.201.83.92:3306/s6_test</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
     <data-source source="LOCAL" name="@localhost" uuid="f1de70b1-5444-4ec9-a48b-3b09d1a6539f">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
@@ -15,11 +8,18 @@
       <jdbc-url>jdbc:mysql://localhost:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="MySQL [2]" uuid="b3595656-7b01-4f68-bb79-737d64c16860">
+    <data-source source="LOCAL" name="MySQL" uuid="79ac25df-ae75-46f7-8fb6-f52799df5da2">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://u6_ASef8bN60q:Ute3f7n0rHumVg%3D06UWnv%2BFL@195.201.83.92:3306/s6_pvp</jdbc-url>
+      <jdbc-url>jdbc:mysql://u10_NPouSk7iMW:xgd5dBb%5E1bBlaB%5EXi73NNMjK@94.130.34.181/s10_pvp</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="MySQL [2]" uuid="8790050a-b146-4ba0-b5f6-7bec5433b16f">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://u10_NPouSk7iMW:xgd5dBb%5E1bBlaB%5EXi73NNMjK@94.130.34.181:3306/s10_pvp</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

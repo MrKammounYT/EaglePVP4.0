@@ -1,7 +1,7 @@
 package eaglemc.TrailsEffect;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.enums.Trails;
+import eaglemc.Utils.enums.Trails;
 import eaglemc.pvp.main;
 import net.minecraft.server.v1_8_R3.EnumParticle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;

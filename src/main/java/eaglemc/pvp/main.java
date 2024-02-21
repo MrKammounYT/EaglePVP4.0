@@ -3,6 +3,7 @@ package eaglemc.pvp;
 
 import eaglemc.Commands.Admin;
 import eaglemc.Commands.User;
+import eaglemc.Event.EventCommand;
 import eaglemc.GameManager.GameManager;
 import eaglemc.PvPCoreAPI;
 import eaglemc.Utils.others.EmojiUtils;
@@ -19,7 +20,7 @@ public class main extends JavaPlugin {
     private GameManager gameManager;
 
     public static String Prefix;
-    private final String Version = "4.0.4 Beta";
+    private final String Version = "4.0.8 Beta";
 
 
     private PvPCoreAPI pvpcoreAPI;
@@ -33,13 +34,15 @@ public class main extends JavaPlugin {
         gameManager = new GameManager(this);
         pvpcoreAPI = new PvPCoreAPI(gameManager);
         getLogger().info("PvP "+ Version +" Has Been Enabled");
-        getLogger().info("Coded By SrKammounYT");
+        getLogger().info("Coded By Kammoun");
         EmojiUtils.load();
         getCommand("pvp").setExecutor(new Admin(gameManager));
         getCommand("stats").setExecutor(new User(gameManager));
         getCommand("spawn").setExecutor(new User(gameManager));
         getCommand("fix").setExecutor(new User(gameManager));
-
+        getCommand("save").setExecutor(new User(gameManager));
+        getCommand("vote").setExecutor(new User(gameManager));
+        //getCommand("event").setExecutor(new EventCommand(gameManager.getEventManager()));
     }
 
 

@@ -1,7 +1,7 @@
 package eaglemc.Listeners;
 
 import eaglemc.GameManager.GameManager;
-import eaglemc.enums.Perks;
+import eaglemc.Utils.enums.Perks;
 import eaglemc.Utils.ScoreBoard;
 import eaglemc.Utils.Title;
 import eaglemc.Utils.Holders.UPlayer;
@@ -10,21 +10,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
@@ -49,7 +47,7 @@ public class Death implements Listener {
         UPlayer up = gm.getPlayerManager().getPlayer(e.getEntity());
         Player p = e.getEntity();
         int exp = getRandomInt(2,10);
-        int coins = getRandomInt(2,10);
+        int coins = getRandomInt(10,50);
         Player k = e.getEntity().getKiller();
         k.setLevel(0);
         p.setLevel(0);
@@ -57,8 +55,6 @@ public class Death implements Listener {
         if(uk.getSlots().containsValue(Perks.DOUBLE_XP)){
             exp *=2;
         }
-        ScoreBoard.create(p,up);
-        ScoreBoard.create(k,uk);
         DecimalFormat df = new DecimalFormat("##.##");
         String health = df.format(k.getHealth() / 2.0D);
         Title.sendActionBar(k,main.color("&a&lKilled "+up.getColoredName(p)+" with "+health + " &c❤ left"));
@@ -90,9 +86,12 @@ public class Death implements Listener {
         up.addDeaths(1);
         up.clearKillStreaks();
         playDeathCry(up,k);
-        p.setGameMode(GameMode.SPECTATOR);
-            for(Player damagers : up.getUassist().getDamagers().keySet()){
+        if(!p.getDisplayName().contains(".")){
+            p.setGameMode(GameMode.SPECTATOR);
+        }
+            for(Player damagers : up.getUassist().getDamages().keySet()){
                 if(damagers.getName().equals(k.getName()))continue;
+                if(!up.getUassist().ShouldGetAssist(damagers))continue;
                 int percentage =  up.getUassist().getDamagePercentage(damagers);
                 UPlayer udamager = gm.getPlayerManager().getPlayer(damagers);
                 int newexp = (exp *percentage) /100;
@@ -104,7 +103,7 @@ public class Death implements Listener {
                 Title.sendActionBar(damagers,main.color("&b&lASSIST &a"+percentage +"% "+"&e+"+newpoints+"✮" +" &6+"+newcoins+"✪" ));
                 damagers.playSound(damagers.getLocation(), Sound.NOTE_BASS_GUITAR,2.0f,3.0f);
                 damagers.sendMessage(main.Prefix + main.color("&b&lASSIST! &7on "+up.getColoredName(p)+ " &b+"+newexp+"XP" +" &6+"+newcoins+"✪"));
-                if(damagers.getHealth() + ((damagers.getMaxHealth()*percentage)/100) >= 20.00){
+                if(damagers.getHealth() + ((damagers.getMaxHealth()*percentage)/100) >= 20){
                     damagers.setHealth(20);
                 }else {
                     damagers.setHealth(damagers.getHealth() + ((damagers.getMaxHealth()*percentage)/100));
@@ -113,7 +112,9 @@ public class Death implements Listener {
                 udamager.addPoints(newpoints);
                 udamager.addCoins(newcoins);
             }
-
+            up.getUassist().reset();
+            ScoreBoard.create(p,up);
+            ScoreBoard.create(k,uk);
         }
 
     }
@@ -125,7 +126,7 @@ public class Death implements Listener {
         e.getDrops().clear();
         UPlayer up = gm.getPlayerManager().getPlayer(e.getEntity());
         Player p = e.getEntity();
-        up.getUassist().clearDamagers();
+        up.getUassist().reset();
         if(e.getEntity().getKiller() != null)return;
         up.clearKillStreaks();
         p.sendMessage(main.Prefix + main.color("&c&lDEATH!"));
@@ -149,43 +150,48 @@ public class Death implements Listener {
     }
 
     void givePerk(Player p,UPlayer up){
+        p.updateInventory();
+        if(up.getKillStreaks() %5 ==0) {
+            Bukkit.broadcastMessage(main.Prefix + main.color(up.getColoredName(p)+ " &eIs on &c"+up.getKillStreaks() + " &eKillStreaks"));
+            PlayKillStreakEffect(p,up);
+            if(up.getSlots().containsValue(Perks.TNT)){
+                p.getInventory().addItem(Perks.TNT.getPerkUsableItem());
+            }
+            else if(up.getSlots().containsValue(Perks.STRENGTH)){
+                p.getInventory().addItem(Perks.STRENGTH.getPerkUsableItem());
+            }
+            else if(up.getSlots().containsValue(Perks.Vampire)){
+                p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,160,0));
+            }
+        }
         if(up.getSlots().containsValue(Perks.GOLDEN_HEAD)){
-            if(up.HasGoldenHead())return;
+            if(up.HasGoldenHead(p))return;
             p.getInventory().addItem(Perks.GOLDEN_HEAD.getPerkUsableItem());
-            up.setGoldenHead(true);
         }
-        else if(up.getSlots().containsValue(Perks.TNT) && up.getKillStreaks() %5 == 0){
-            p.getInventory().addItem(Perks.TNT.getPerkUsableItem());
-        }
-        else if(up.getSlots().containsValue(Perks.STRENGTH) && up.getKillStreaks() %5 == 0){
-            p.getInventory().addItem(Perks.STRENGTH.getPerkUsableItem());
-        }
-        else if(up.getSlots().containsValue(Perks.Vampire)){
-            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,160,0));
-        }
-        announceStreak(p,up);
+
     }
 
     private final ArrayList<UUID> killStreaks = new ArrayList<>();
 
-    private void announceStreak(Player p ,UPlayer up){
-        if(killStreaks.contains(p.getUniqueId())){
-            if(up.getKillStreaks() != 0 &&up.getKillStreaks() %5  == 0 ){
-                Bukkit.broadcastMessage(main.Prefix + main.color(up.getColoredName(p)+ " &eIs on &c"+up.getKillStreaks() + " &eKillStreaks"));
-            }
-            return;
-        }
-        if(up.getKillStreaks() != 0 &&up.getKillStreaks() %5  == 0){
-            killStreaks.add(p.getUniqueId());
+    @EventHandler
+    public void LeaveStreak(PlayerQuitEvent e){
+        killStreaks.remove(e.getPlayer().getUniqueId());
+    }
+
+    private void PlayKillStreakEffect(Player p ,UPlayer up){
+        if(up.getSelectedKillStreakEffect() == null) return;
+        if(killStreaks.contains(p.getUniqueId()))return;
+        if(up.getKillStreaks() %5  != 0)return;
+        killStreaks.add(p.getUniqueId());
             new BukkitRunnable(){
                 @Override
                 public void run() {
-                    if(!killStreaks.contains(p.getUniqueId())){
+                    if((!killStreaks.contains(p.getUniqueId())) || up.getSelectedKillStreakEffect() == null){
                         cancel();
                     }
-                    Item item = p.getWorld().dropItemNaturally(p.getLocation().add(0,2,0),new ItemStack(Material.GOLD_NUGGET));
+                    Item item = p.getWorld().dropItemNaturally(p.getLocation().add(0,2,0),up.getSelectedKillStreakEffect().getKillstreakItem());
                     item.setPickupDelay(-1);
-                    Item item2 = p.getWorld().dropItemNaturally(p.getLocation().add(0,2,0),new ItemStack(Material.GOLD_INGOT));
+                    Item item2 = p.getWorld().dropItemNaturally(p.getLocation().add(0,2,0),up.getSelectedKillStreakEffect().getKillstreakItem());
                     item2.setPickupDelay(-1);
 
                     new BukkitRunnable(){
@@ -198,7 +204,8 @@ public class Death implements Listener {
                 }
             }.runTaskTimer(main.getInstance(),0,20);
 
-        }
-
     }
+
+
+
 }

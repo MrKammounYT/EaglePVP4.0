@@ -68,7 +68,7 @@ public class KitSelectionEvent implements Listener {
                             return;
                         }
                         up.removeCoins(kits.getPrice());
-                        addPermission(p.getUniqueId(),kits.getPermission());
+                        addPermission(p,kits.getPermission());
                         p.sendMessage(main.Prefix + main.color("&aYou have bought "+kits.getDisplayName()));
                         p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,5.0f);
                         Menu.OpenMainShop(p,up);
@@ -88,9 +88,8 @@ public class KitSelectionEvent implements Listener {
             }
         }
     }
-    void addPermission(UUID uuid, String permission) {
-        SharedAPI api = SharedAPI.getInstance();
-        api.getProfileHandler().getProfile(uuid).getPermissions().add(new ProfilePermission(permission,999999999));
+    void addPermission(Player p, String permission) {
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(),"user perm add "+p.getDisplayName() + " "+permission + " 30d s:pvp");
     }
 
 }

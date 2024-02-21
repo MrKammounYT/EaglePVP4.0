@@ -29,7 +29,7 @@ public class SDeathCry {
             e.printStackTrace();
         }
     }
-    private List<Integer> getDeathCryForPlayer(UUID playerID) {
+    public List<Integer> getDeathCryForPlayer(UUID playerID) {
         List<Integer> DeathCry = new ArrayList<>();
 
         try {

@@ -1,6 +1,6 @@
 package eaglemc.Managers;
 
-import eaglemc.enums.TQuests;
+import eaglemc.Utils.enums.TQuests;
 import eaglemc.Utils.Holders.Quest;
 import eaglemc.pvp.main;
 import org.bukkit.Bukkit;

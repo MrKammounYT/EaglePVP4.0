@@ -25,7 +25,7 @@ public class SPlayer {
         try {
             PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS PVP (NAME VARCHAR(100),UUID VARCHAR(100),CUSTOMNAME VARCHAR(1000)," +
                     "DEATHS INT(100),POINTS INT(100),KILLS INT(100),COINS INT(100),EXP INT(100),LEVEL INT(100)" +
-                    ",STRAIL int(1),SDEATHCRY int(1),PRIMARY KEY (UUID))");
+                    ",STRAIL int(1),SDEATHCRY int(1),SKillStreakEffect int(1),PRIMARY KEY (UUID))");
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -81,6 +81,17 @@ public class SPlayer {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET SDEATHCRY = ? WHERE UUID = ?");
             ps.setInt(1,DeathCryID);
+            ps.setString( 2, uuid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setSelectedKillStreakEffect(String uuid,int KillstreakID){
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE PVP SET SKillStreakEffect = ? WHERE UUID = ?");
+            ps.setInt(1,KillstreakID);
             ps.setString( 2, uuid);
             ps.executeUpdate();
             ps.close();
@@ -171,6 +182,21 @@ public class SPlayer {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 id = rs.getInt("SDEATHCRY");
+            }
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+    public int getSelectedKillStreakEffect(String uuid) {
+        int id = 0;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT SKillStreakEffect FROM PVP WHERE UUID = ?");
+            ps.setString(1, uuid);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("SKillStreakEffect");
             }
             ps.close();
         } catch (SQLException e) {
@@ -356,16 +382,16 @@ public class SPlayer {
 
 
 
-    public DataContainer getTop(int id){
+    public DataContainer getTopPoints(int id){
         DataContainer PlayerData;
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT NAME,POINTS,DEATHS,CUSTOMNAME FROM PVP ORDER BY POINTS DESC LIMIT "+id);
+            PreparedStatement ps = connection.prepareStatement("SELECT NAME,POINTS,DEATHS,KILLS,CUSTOMNAME FROM PVP ORDER BY POINTS DESC LIMIT "+id);
             ResultSet rs = ps.executeQuery();
             int i = 0;
             while (rs.next()) {
                 if (++i != id)continue;
-                PlayerData = new DataContainer(rs.getString("NAME"),rs.getInt("POINTS")
-                        ,rs.getInt("DEATHS"),rs.getString("CUSTOMNAME"));
+                PlayerData = new DataContainer(i,rs.getString("NAME"),rs.getInt("POINTS")
+                        ,rs.getInt("DEATHS"),rs.getInt("KILLS"),rs.getString("CUSTOMNAME"));
                 return PlayerData;
             }
             rs.close();
@@ -373,7 +399,45 @@ public class SPlayer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new DataContainer("Chesthead",0,0,"&fNone");
+        return new DataContainer(69,"Chesthead",0,0,0,"&fNone");
+    }
+    public DataContainer getTopKills(int id){
+        DataContainer PlayerData;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT NAME,POINTS,DEATHS,KILLS,CUSTOMNAME FROM PVP ORDER BY KILLS DESC LIMIT "+id);
+            ResultSet rs = ps.executeQuery();
+            int i = 0;
+            while (rs.next()) {
+                if (++i != id)continue;
+                PlayerData = new DataContainer(i,rs.getString("NAME"),rs.getInt("POINTS")
+                        ,rs.getInt("DEATHS"),rs.getInt("KILLS"),rs.getString("CUSTOMNAME"));
+                return PlayerData;
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new DataContainer(69,"Chesthead",0,0,0,"&fNone");
+    }
+    public HashMap<String,DataContainer> getTopPointsPlayers(int range){
+        HashMap<String,DataContainer> TopPointsPlayers = new HashMap<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT UUID,NAME,POINTS,DEATHS,KILLS,CUSTOMNAME FROM PVP ORDER BY POINTS DESC LIMIT "+range);
+            ResultSet rs = ps.executeQuery();
+            int i = 0;
+            while (rs.next()) {
+                i++;
+               DataContainer PlayerData = new DataContainer(i,rs.getString("NAME"),rs.getInt("POINTS")
+                        ,rs.getInt("DEATHS"),rs.getInt("KILLS"),rs.getString("CUSTOMNAME"));
+                TopPointsPlayers.put(rs.getString("UUID"),PlayerData);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return TopPointsPlayers;
     }
 
 }

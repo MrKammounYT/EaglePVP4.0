@@ -8,35 +8,34 @@ public class Uassist {
 
 
 
-    private int finaldamage;
-    private final HashMap<Player,Double> damagers = new HashMap<>();
+    private final HashMap<Player,Integer> damagers = new HashMap<>();
 
-
-    public void AddfinalDamage(int finaldamage){
-        this.finaldamage += finaldamage;
-    }
-
+    private final HashMap<Player, Long> damagesLastHitTime = new HashMap<>();
 
     public int getDamagePercentage(Player player){
-        double data = damagers.get(player);
-        int value = (int)data;
-        return  (value*100)/finaldamage;
+        return  (damagers.get(player)/20)*100;
     }
-
-    public void addDamagers(Player player,double damage){
+    public boolean ShouldGetAssist(Player damager){
+        damager.sendMessage("assist: "+(System.currentTimeMillis() <=  damagesLastHitTime.get(damager)));
+        return System.currentTimeMillis() <=  damagesLastHitTime.get(damager);
+    }
+    public void addDamagers(Player player,int damage){
         if(damage == 0)return;
-        if(damagers.containsKey(player) ){
+        damagesLastHitTime.remove(player);
+        damagesLastHitTime.put(player,System.currentTimeMillis() +(10 * 1000));
+
+        if(damagers.containsKey(player)){
             damagers.put(player,damagers.get(player) + damage);
             return;
         }
         damagers.put(player,damage);
     }
-
-    public void clearDamagers(){
-        damagers.clear();
+    public HashMap<Player, Integer> getDamages() {
+        return damagers;
     }
 
-    public HashMap<Player, Double> getDamagers() {
-        return damagers;
+    public void reset() {
+        damagers.clear();
+        damagesLastHitTime.clear();
     }
 }

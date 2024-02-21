@@ -12,9 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 public class Admin implements CommandExecutor {
@@ -116,13 +114,10 @@ public class Admin implements CommandExecutor {
             String d = args[0];
          if(d.equalsIgnoreCase("setlocation") || d.equalsIgnoreCase("setloc")){
                 if(args[1].equalsIgnoreCase("leaderboard")){
-                    if(args[2].equalsIgnoreCase("1") || args[2].equalsIgnoreCase("2")
-                            || args[2].equalsIgnoreCase("3")){
+                    if(args[2].equalsIgnoreCase("kills") || args[2].equalsIgnoreCase("points")){
                         Location lc= p.getLocation();
-                        int limit = Integer.parseInt(args[2]);
-                        LocationAPI.setLocation(lc,"top"+limit);
-                        DataContainer map = gm.getDBManager().getSPlayer().getTop(limit);
-                        CreateTopPlayers(lc,map.getCustomName(),map.getPoints(),limit);
+                        LocationAPI.setLocation(lc,("top"+args[2]).toLowerCase());
+                        CreateTopPlayers(lc,args[2].toLowerCase());
 
 
                     }
@@ -220,43 +215,53 @@ public class Admin implements CommandExecutor {
 
 
 
-    void CreateTopPlayers(Location lc,String name,int Kills,int top){
-        ArmorStand player = lc.getWorld().spawn(lc,ArmorStand.class);
-        ArmorStand topArmorStand = lc.getWorld().spawn(lc.clone().add(0,0.5,0),ArmorStand.class);
-        ArmorStand under = lc.getWorld().spawn(lc.clone().add(0,-0.5,0),ArmorStand.class);
-        under.setVisible(false);
-        under.setCustomNameVisible(true);
-        under.setCustomName(main.color("&a"+Kills +" &eKills"));
-        under.setGravity(false);
-        topArmorStand.setCustomName(main.color("&e#&a&l"+top + " &r"+name));
-        topArmorStand.setCustomNameVisible(true);
-        topArmorStand.setVisible(false);
-        topArmorStand.setGravity(false);
-
-
-        player.setSmall(true);
-        player.setCustomNameVisible(false);
-        player.setHelmet(Heads.getPlayerHead(name));
-        if(top == 1){
-            player.setItemInHand(new ItemStack(Material.DIAMOND_SWORD));
-            player.setChestplate(new ItemStack(Material.IRON_CHESTPLATE));
-            player.setLeggings(new ItemStack(Material.IRON_LEGGINGS));
-            player.setBoots(new ItemStack(Material.IRON_BOOTS));
-        }else if(top == 2){
-            player.setItemInHand(new ItemStack(Material.IRON_SWORD));
-            player.setChestplate(new ItemStack(Material.GOLD_CHESTPLATE));
-            player.setLeggings(new ItemStack(Material.GOLD_LEGGINGS));
-            player.setBoots(new ItemStack(Material.GOLD_BOOTS));
+    void CreateTopPlayers(Location lc,String type){
+        for(World worlds : Bukkit.getWorlds()){
+            for(Entity entity : worlds.getEntities()){
+                if(entity instanceof  ArmorStand){
+                    ((ArmorStand) entity).setHealth(0);
+                }
+            }
         }
-        else {
-            player.setItemInHand(new ItemStack(Material.STONE_SWORD));
-            player.setChestplate(new ItemStack(Material.LEATHER_CHESTPLATE));
-            player.setLeggings(new ItemStack(Material.LEATHER_LEGGINGS));
-            player.setBoots(new ItemStack(Material.LEATHER_BOOTS));
+        float x = 0.4f;
+        ArmorStand leaderboard = (ArmorStand) lc.getWorld().spawnEntity(lc.clone().add(0,1,0), EntityType.ARMOR_STAND);
+        leaderboard.setVisible(false);
+        leaderboard.setCanPickupItems(true);
+        leaderboard.setSmall(true);
+        leaderboard.setGravity(false);
+        if(type.equalsIgnoreCase("points")){
+            leaderboard.setCustomName("§e§lLeaderboard - §6§lSorted By Points");
+            leaderboard.setCustomNameVisible(true);
+            for (int i = 1; i <= 10; i++) {
+                DataContainer container = gm.getDBManager().getSPlayer().getTopPoints(i);
+                ArmorStand ar = (ArmorStand) lc.getWorld().spawnEntity(lc.clone().add(0.0,1 -(x * i), 0.0),
+                        EntityType.ARMOR_STAND);
+                ar.setVisible(false);
+                ar.setCanPickupItems(true);
+                ar.setSmall(true);
+                ar.setGravity(false);
+                ar.setCustomName(main.color("&b#&e&l"+i+ " &r"+container.getCustomName() + " &7- &e"+container.getPoints()));
+                ar.setCustomNameVisible(true);
+
+            }
+        }else if(type.equalsIgnoreCase("kills")){
+            leaderboard.setCustomName("§e§lLeaderboard - §6§lSorted By Kills");
+            leaderboard.setCustomNameVisible(true);
+            for (int i = 1; i <= 10; i++) {
+                DataContainer container = gm.getDBManager().getSPlayer().getTopKills(i);
+                ArmorStand ar = (ArmorStand) lc.getWorld().spawnEntity(lc.clone().add(0.0,1 -(x * i), 0.0),
+                        EntityType.ARMOR_STAND);
+                ar.setVisible(false);
+                ar.setCanPickupItems(true);
+                ar.setSmall(true);
+                ar.setGravity(false);
+                ar.setCustomName(main.color("&b#&e&l"+i+ " &r"+container.getCustomName() + " &7- &e"+container.getKills()));
+                ar.setCustomNameVisible(true);
+
+            }
+        }else {
+            leaderboard.setHealth(0);
         }
-
-
-
 
     }
 

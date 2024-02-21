@@ -1,6 +1,6 @@
 package eaglemc.Utils.Inventory;
 
-import eaglemc.enums.Type;
+import eaglemc.Utils.enums.Type;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 

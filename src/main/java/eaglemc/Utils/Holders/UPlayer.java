@@ -1,10 +1,13 @@
 package eaglemc.Utils.Holders;
 
+import eaglemc.DataBase.*;
+import eaglemc.Managers.DataBaseManager;
 import eaglemc.Utils.ScoreBoard;
-import eaglemc.enums.DeathCry;
+import eaglemc.Utils.enums.DeathCry;
 import eaglemc.GameManager.GameManager;
-import eaglemc.enums.Perks;
-import eaglemc.enums.Trails;
+import eaglemc.Utils.enums.KillStreakEffect;
+import eaglemc.Utils.enums.Perks;
+import eaglemc.Utils.enums.Trails;
 import eaglemc.Utils.others.LocationAPI;
 import eaglemc.Utils.Title;
 import eaglemc.pvp.main;
@@ -13,9 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-import xyz.refinedev.phoenix.Phoenix;
+import org.bukkit.scheduler.BukkitRunnable;
 import xyz.refinedev.phoenix.SharedAPI;
-import xyz.refinedev.phoenix.profile.Profile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +39,6 @@ public class UPlayer {
 
     private Location deathLocation;
 
-    private boolean HasGoldenHead = false;
 
 
     private final HashMap<Integer, Perks> slots;
@@ -53,6 +54,7 @@ public class UPlayer {
 
     private ArrayList<Trails> Trails ;
 
+    private ArrayList<KillStreakEffect> killStreakEffects;
     private ArrayList<DeathCry> DeathCries;
     private final Uassist uassist = new Uassist();
 
@@ -77,6 +79,8 @@ public class UPlayer {
 
     private  DeathCry SelectedDeathCry;
 
+    private KillStreakEffect SelectedKillStreakEffect;
+
     private int flint;
 
 
@@ -84,7 +88,7 @@ public class UPlayer {
 
 
     public UPlayer(Player p, GameManager manager, UUID uuid, int kills, int deaths, int points, int coins, int exp, int level, ArrayList<Perks> perks, HashMap<Integer, Perks> slots,
-                   ArrayList<Trails> trails, Trails SelectedTrail, ArrayList<DeathCry> DC, DeathCry selectedDC){
+                   ArrayList<Trails> trails, Trails SelectedTrail, ArrayList<DeathCry> DC, DeathCry selectedDC,ArrayList<KillStreakEffect> killStreakEffects,KillStreakEffect selectedKillStreakEffect){
         this.kills = kills;
         this.deaths= deaths;
         this.points = points;
@@ -98,6 +102,8 @@ public class UPlayer {
         this.Trails = trails;
         this.SelectedDeathCry = selectedDC;
         this.DeathCries = DC;
+        this.SelectedKillStreakEffect = selectedKillStreakEffect;
+        this.killStreakEffects = killStreakEffects;
         flint = 1;
         for(Kit kits: manager.getKitManager().getKits().values()){
             if(kits.getPermission().equals("noperm")){
@@ -131,6 +137,14 @@ public class UPlayer {
         return DeathCries;
     }
 
+    public ArrayList<KillStreakEffect> getKillStreakEffects() {
+        return killStreakEffects;
+    }
+
+    public KillStreakEffect getSelectedKillStreakEffect() {
+        return SelectedKillStreakEffect;
+    }
+
     public void addDailyQuest(Quest quest){
         DailyQuests.add(quest);
     }
@@ -139,7 +153,7 @@ public class UPlayer {
         return DailyQuests;
     }
 
-    public eaglemc.enums.Trails getSelectedTrail() {
+    public eaglemc.Utils.enums.Trails getSelectedTrail() {
         return SelectedTrail;
     }
     public void setSelectedTrail(Trails trail){
@@ -211,7 +225,7 @@ public class UPlayer {
 
 
 
-    public ArrayList<eaglemc.enums.Trails> getTrails() {
+    public ArrayList<eaglemc.Utils.enums.Trails> getTrails() {
         return Trails;
     }
 
@@ -237,13 +251,18 @@ public class UPlayer {
 
     }
 
-    public boolean HasGoldenHead() {
-        return HasGoldenHead;
+    public boolean HasGoldenHead(Player p) {
+        for(ItemStack item: p.getInventory().getContents()){
+            if(item==null)continue;
+            if(!item.hasItemMeta())continue;
+            if(!item.getItemMeta().hasDisplayName())continue;
+            if(item.getItemMeta().getDisplayName().equalsIgnoreCase(main.color("&6Golden Head ")))return true;
+
+        }
+        return false;
     }
 
-    public void setGoldenHead(boolean hasGoldenHead) {
-        HasGoldenHead = hasGoldenHead;
-    }
+
 
 
 
@@ -266,8 +285,9 @@ public class UPlayer {
         return KillStreaks;
     }
 
+
     public void addKillStreak(){
-        KillStreaks++;
+        KillStreaks+=1;
     }
     public void clearKillStreaks(){
         KillStreaks = 0;
@@ -435,4 +455,48 @@ public class UPlayer {
     }
 
 
+    public void SavePlayerData(Player p, DataBaseManager DBManager){
+        SPlayer sPlayer = DBManager.getSPlayer();
+        SPerks sPerks = DBManager.getsPerks();
+        STrails sTrails =DBManager.getsTrails();
+        SDeathCry sDeathCry = DBManager.getsDeathCry();
+        SKillStreaksEffect sKillStreaksEffect = DBManager.getsKillStreaksEffect();
+        new BukkitRunnable(){
+
+            @Override
+            public void run() {
+                    UUID uuid = p.getUniqueId();
+                    sPlayer.setCoins(uuid.toString(),coins);
+                    sPlayer.setLevel(uuid.toString(),level);
+                    sPlayer.setDeath(uuid.toString(),deaths);
+                    sPlayer.setKill(uuid.toString(),kills);
+                    sPlayer.setExp(uuid.toString(),exp);
+                    sPlayer.setPoints(uuid.toString(),points);
+                    sPlayer.setCustomName(uuid,getCustomName(p));
+                    for(Perks perks : getPlayerPerks()){
+                        sPerks.addPerk(uuid,perks.getId());
+                    }
+                    for(int i=1;i<5;i++){
+                        sPerks.setPerkInSlot(uuid,i,getPerkInSlot(i).getId());
+                    }
+                    for(Trails trails : getTrails()){
+                        sTrails.addTrail(uuid,trails.getId());
+                    }
+                    for(DeathCry deathCry : getDeathCries()){
+                        sDeathCry.addDeathCry(uuid,deathCry.getId());
+                    }
+                    for(KillStreakEffect killStreakEffect : getKillStreakEffects()){
+                        sKillStreaksEffect.addKillStreaksEffect(uuid,killStreakEffect.getId());
+                    }
+                    sPlayer.setSelectedTrail(uuid.toString(),getSelectedTrail().getId());
+                    sPlayer.setSelectedDeathCry(uuid.toString(),getSelectedDeathCry().getId());
+                    sPlayer.setSelectedKillStreakEffect(uuid.toString(),getSelectedKillStreakEffect().getId());
+
+                }
+        }.runTaskAsynchronously(main.getInstance());
+    }
+
+    public void setSelectedKillStreakEffect(KillStreakEffect kse) {
+        SelectedKillStreakEffect = kse;
+    }
 }

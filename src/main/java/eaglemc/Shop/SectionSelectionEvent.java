@@ -39,6 +39,13 @@ public class SectionSelectionEvent implements Listener {
             Menu.OpenMainShop(p,up);
             p.playSound(p.getLocation(),Sound.CLICK,3.0f,2.0f);
         }
+        if(e.getCurrentItem().getItemMeta().getDisplayName().equals(main.color("&a&lSave Your Current Inventory"))){
+            e.setCancelled(true);
+        }
+        if(e.getCurrentItem().getItemMeta().getDisplayName().equals(main.color("&cClose"))){
+            e.setCancelled(true);
+            p.closeInventory();
+        }
         if(e.getView().getTitle().equals(main.color("&6&l⚔ PvP &e&l4.0 &e&lShop"))){
             e.setCancelled(true);
             if(e.getCurrentItem().getType() == Material.BEDROCK)return;
@@ -62,6 +69,11 @@ public class SectionSelectionEvent implements Listener {
             if(e.getCurrentItem().getItemMeta().getDisplayName().equals(main.color("&e&lDeath Cry"))){
                 p.playSound(p.getLocation(), Sound.CLICK,3.0f,2.0f);
                 Menu.openDeathCryMenu(p,up);
+
+            }
+            if(e.getCurrentItem().getItemMeta().getDisplayName().equals(main.color("&c&lKillStreak Effect"))){
+                p.playSound(p.getLocation(), Sound.CLICK,3.0f,2.0f);
+                Menu.openKillStreakEffectsMenu(p,up);
 
             }
         }

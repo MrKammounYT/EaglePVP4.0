@@ -1,11 +1,8 @@
 package eaglemc.Shop.Menus;
 
-import eaglemc.enums.DeathCry;
+import eaglemc.Utils.enums.*;
 import eaglemc.GameManager.GameManager;
 import eaglemc.Shop.Items.Items;
-import eaglemc.enums.Perks;
-import eaglemc.enums.Trails;
-import eaglemc.enums.Type;
 import eaglemc.Utils.others.GlowEnchantment;
 import eaglemc.Utils.Holders.Kit;
 import eaglemc.Utils.Inventory.SelectionInventory;
@@ -26,7 +23,7 @@ public class Menu {
     private static final Items items = new Items();
     public static void OpenMainShop(Player p, UPlayer up){
         p.closeInventory();
-        Inventory inv = Bukkit.createInventory(null, 45, main.color("&6&l⚔ PvP &e&l4.0 &e&lShop"));
+        Inventory inv = Bukkit.createInventory(null, 54, main.color("&6&l⚔ PvP &e&l4.0 &e&lShop"));
         for(int i=0;i<inv.getSize();i++){
             inv.setItem(i,getGlass());
         }
@@ -35,9 +32,14 @@ public class Menu {
         inv.setItem(14,items.getPerkInSlot(up,3));
         inv.setItem(16,items.getPerkInSlot(up,4));
 
-        inv.setItem(29,items.Trails());
-        inv.setItem(31,items.BattleCry());
-        inv.setItem(33,items.Kits());
+        inv.setItem(28,items.Trails());
+        inv.setItem(30,items.BattleCry());
+        inv.setItem(32,items.Kits());
+        inv.setItem(34,items.KillStreakEffect());
+
+        inv.setItem(45,items.Close());
+        inv.setItem(53,items.SaveInventory());
+
         p.openInventory(inv);
     }
     public static void OpenPerksMenu(Player p, UPlayer up,int slot){
@@ -88,7 +90,21 @@ public class Menu {
         inv.setItem(13,items.getDeathCry(DeathCry.GHAST,up));
         inv.setItem(14,items.getDeathCry(DeathCry.Guardian,up));
         inv.setItem(15,items.getDeathCry(DeathCry.wolf,up));
+
         inv.setItem(26,items.ClearDeathCry());
+        inv.setItem(18,items.GoBack());
+        p.openInventory(inv);
+    }
+    public static void openKillStreakEffectsMenu(Player p,UPlayer up){
+        Inventory inv = Bukkit.createInventory(new SelectionInventory(Type.KillStreakEffect),27,"KillStreak Effects");
+        for(int i=0;i<inv.getSize();i++){
+            inv.setItem(i,getGlass());
+        }
+        for(KillStreakEffect killStreakEffect : KillStreakEffect.values()){
+            if(killStreakEffect.equals(KillStreakEffect.none))continue;
+            inv.setItem(killStreakEffect.getSlot(),items.getKillStreakEffects(killStreakEffect,up));
+        }
+        inv.setItem(26,items.ClearKillStreakEffect());
         inv.setItem(18,items.GoBack());
         p.openInventory(inv);
     }

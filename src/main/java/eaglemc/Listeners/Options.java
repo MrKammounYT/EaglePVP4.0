@@ -130,6 +130,8 @@ public class Options implements Listener {
     }
     @EventHandler
     public void onPlace(BlockPlaceEvent e){
+        if(e.getBlock() == null)return;
+        if(e.getBlock().getType() == Material.FIRE)return;
         if(pm.getPlayer(e.getPlayer()).isInBuild())return;
         e.setCancelled(true);
     }

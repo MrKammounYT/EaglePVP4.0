@@ -1,7 +1,7 @@
 package eaglemc.PerkEffect;
 
 import eaglemc.Managers.PlayerManager;
-import eaglemc.enums.Perks;
+import eaglemc.Utils.enums.Perks;
 import eaglemc.pvp.main;
 import org.bukkit.Material;
 import org.bukkit.Sound;

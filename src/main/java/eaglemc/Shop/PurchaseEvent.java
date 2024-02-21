@@ -1,10 +1,11 @@
 package eaglemc.Shop;
 
-import eaglemc.enums.DeathCry;
+import eaglemc.Utils.enums.DeathCry;
 import eaglemc.Managers.PlayerManager;
-import eaglemc.enums.Perks;
+import eaglemc.Utils.enums.KillStreakEffect;
+import eaglemc.Utils.enums.Perks;
 import eaglemc.Shop.Menus.Menu;
-import eaglemc.enums.Trails;
+import eaglemc.Utils.enums.Trails;
 import eaglemc.Utils.Inventory.BuyInventory;
 import eaglemc.Utils.ScoreBoard;
 import eaglemc.Utils.Holders.UPlayer;
@@ -32,6 +33,7 @@ public class PurchaseEvent implements Listener {
             Trails trail =null;
             Perks perk = null;
             DeathCry deathCry = null;
+            KillStreakEffect killStreakEffect = null;
             if(o instanceof Trails){
                 trail = (Trails) o;
             }
@@ -40,6 +42,9 @@ public class PurchaseEvent implements Listener {
             }
             else if(o instanceof DeathCry){
                 deathCry = (DeathCry) o;
+            }
+            else if(o instanceof KillStreakEffect){
+                killStreakEffect = (KillStreakEffect) o;
             }
             e.setCancelled(true);
             Player p = (Player)e.getWhoClicked();
@@ -81,6 +86,19 @@ public class PurchaseEvent implements Listener {
                 up.removeCoins(deathCry.getPrice());
                 up.getDeathCries().add(deathCry);
                 p.sendMessage(main.Prefix + main.color("&aYou have bought "+deathCry.getDisplayName()));
+                p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,5.0f);
+                Menu.OpenMainShop(p,up);
+                ScoreBoard.create(p,up);
+            }
+            else if(killStreakEffect != null){
+                if(up.getCoins() < killStreakEffect.getPrice()){
+                    p.closeInventory();
+                    Menu.OpenMainShop(p,up);
+                    return;
+                }
+                up.removeCoins(killStreakEffect.getPrice());
+                up.getKillStreakEffects().add(killStreakEffect);
+                p.sendMessage(main.Prefix + main.color("&aYou have bought "+killStreakEffect.getDisplayName()));
                 p.playSound(p.getLocation(), Sound.LEVEL_UP,3.0f,5.0f);
                 Menu.OpenMainShop(p,up);
                 ScoreBoard.create(p,up);

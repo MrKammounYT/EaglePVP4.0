@@ -8,16 +8,29 @@ public class DataContainer {
     private int points;
     private int deaths;
     private String name;
+    private  int kills;
 
-    public DataContainer(String name, int points, int deaths, String customName) {
+    private int top;
+
+    public DataContainer(int top,String name, int points, int deaths,int kills, String customName) {
+        this.top =top;
         this.customName = customName;
         this.name = name;
         this.points = points;
         this.deaths = deaths;
+        this.kills = kills;
     }
 
     public int getPoints() {
         return points;
+    }
+
+    public int getTop() {
+        return top;
+    }
+
+    public int getKills() {
+        return kills;
     }
 
     public int getDeaths() {

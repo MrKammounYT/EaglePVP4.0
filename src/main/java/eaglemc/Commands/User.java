@@ -35,6 +35,21 @@ public class User implements CommandExecutor {
 
         Player p= (Player)commandSender;
 
+            if(command.getName().equalsIgnoreCase("vote")){
+                if(strings.length == 0){
+                    p.sendMessage(main.color("&8&m-------------------------&7&m-------------------------"));
+                    p.sendMessage(main.color("&1"));
+                    p.sendMessage(main.color("&e                      https://eaglemc.net/v1"));
+                    p.sendMessage(main.color("&e                      https://eaglemc.net/v2"));
+                    p.sendMessage(main.color("&e                      https://eaglemc.net/v3"));
+                    p.sendMessage(main.color("&e                      https://eaglemc.net/v4"));
+                    p.sendMessage(main.color("&1"));
+                    p.sendMessage(main.color("&8&m-------------------------&7&m-------------------------"));
+
+
+                }
+            }
+
             if(command.getName().equalsIgnoreCase("stats")){
                 if(strings.length == 1){
                     String t = strings[0];
@@ -107,6 +122,7 @@ public class User implements CommandExecutor {
 
 
 
+
         }
         else if(command.getName().equalsIgnoreCase("fix")){
                 if(FixCooldown.containsKey(p.getUniqueId())){
@@ -118,9 +134,13 @@ public class User implements CommandExecutor {
                 p.playSound(p.getLocation(), Sound.ORB_PICKUP, 0.2F,  2.0F + 0.9F);
                 p.sendMessage(main.Prefix  + "§aThere you go!");
         }
+       /* else if(command.getName().equalsIgnoreCase("save")){
+            p.sendMessage(main.Prefix + main.color("&aYour Inventory Has Been Saved!"));
+            gameManager.getSaveManager().saveInventory(p);
+        }*/
 
 
 
-        return true;
+                return true;
     }
 }

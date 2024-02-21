@@ -1,6 +1,7 @@
 package eaglemc.Listeners;
 
 import eaglemc.GameManager.GameManager;
+import eaglemc.Managers.SaveManager;
 import eaglemc.Utils.others.LocationAPI;
 import eaglemc.Utils.Title;
 import eaglemc.pvp.main;
@@ -15,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Respawn implements Listener {
 
     private GameManager gm;
+
     public Respawn(GameManager gm){
             this.gm = gm;
     }
@@ -24,12 +26,14 @@ public class Respawn implements Listener {
         new BukkitRunnable(){
             @Override
             public void run() {
-                gm.getPlayerManager().getPlayer(p).wearKit(p);
+
                 p.teleport(LocationAPI.getLocation("spawn"));
                 p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT,3.0f,4.0f);
                 p.setHealth(20);
                 p.setFoodLevel(20);
                 p.setGameMode(GameMode.SURVIVAL);
+                gm.getPlayerManager().getPlayer(p).wearKit(p);
+
             }
         }.runTask(main.getInstance());
 

@@ -1,8 +1,9 @@
 package eaglemc.Shop.Menus;
 
-import eaglemc.enums.DeathCry;
-import eaglemc.enums.Perks;
-import eaglemc.enums.Trails;
+import eaglemc.Utils.enums.DeathCry;
+import eaglemc.Utils.enums.KillStreakEffect;
+import eaglemc.Utils.enums.Perks;
+import eaglemc.Utils.enums.Trails;
 import eaglemc.Utils.Inventory.BuyInventory;
 import eaglemc.pvp.main;
 import org.bukkit.Bukkit;
@@ -26,6 +27,10 @@ public class BuyMenu {
         }
         if(ToBuy instanceof DeathCry){
             inv.setItem(11,Purchase(((DeathCry)ToBuy).getDisplayName(),((DeathCry)ToBuy).getPrice()));
+        }
+        if (ToBuy instanceof KillStreakEffect){
+            inv.setItem(11,Purchase(((KillStreakEffect)ToBuy).getDisplayName(),((KillStreakEffect)ToBuy).getPrice()));
+
         }
         inv.setItem(15,Decline());
         p.openInventory(inv);

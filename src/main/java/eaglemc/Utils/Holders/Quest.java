@@ -1,6 +1,6 @@
 package eaglemc.Utils.Holders;
 
-import eaglemc.enums.TQuests;
+import eaglemc.Utils.enums.TQuests;
 
 import java.util.ArrayList;
 import java.util.HashMap;
