@@ -124,6 +124,15 @@ public class Menu {
     }
 
 
+    public static void OpenSaveMenu(Player p,UPlayer up){
+            Inventory inv = Bukkit.createInventory(null,27,"Inventory Manager");
+
+
+
+
+            p.openInventory(inv);
+    }
+
 
 
 

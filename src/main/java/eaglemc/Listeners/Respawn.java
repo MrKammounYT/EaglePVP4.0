@@ -1,9 +1,7 @@
 package eaglemc.Listeners;
 
 import eaglemc.GameManager.GameManager;
-import eaglemc.Managers.SaveManager;
 import eaglemc.Utils.others.LocationAPI;
-import eaglemc.Utils.Title;
 import eaglemc.pvp.main;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -32,6 +30,7 @@ public class Respawn implements Listener {
                 p.setHealth(20);
                 p.setFoodLevel(20);
                 p.setGameMode(GameMode.SURVIVAL);
+                gm.getPlayerManager().getPlayer(p).setFlint(1);
                 gm.getPlayerManager().getPlayer(p).wearKit(p);
 
             }

@@ -1,11 +1,13 @@
 package eaglemc.Listeners;
 
+import eaglemc.GameManager.GameManager;
 import eaglemc.Managers.PlayerManager;
 import eaglemc.Utils.Holders.UPlayer;
 import eaglemc.pvp.main;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,17 +19,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Flint implements Listener {
 
-    private final PlayerManager pm;
-    public Flint(PlayerManager playerManager){
-        this.pm = playerManager;
+    private final GameManager gm;
+    public Flint(GameManager gameManager){
+        this.gm = gameManager;
     }
     
     @EventHandler
     public void OnBlockIgnite(BlockIgniteEvent e){
         if(e.getBlock() == null)return;
-        if(pm.getPlayer(e.getPlayer()).canUseFlint()){
+        if(e.getBlock().getType() == Material.STAINED_GLASS || e.getBlock().getType() == Material.GLASS)return;
+        if(e.getCause() != BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL)return;
+        UPlayer up = gm.getPlayerManager().getPlayer(e.getPlayer());
+        if(up ==null)return;
+        if(up.canUseFlint()){
             e.setCancelled(false);
-            pm.getPlayer(e.getPlayer()).removeFlint(e.getPlayer());
+            up.removeFlint(e.getPlayer());
             removeFlint(e.getBlock());
         }else {
             e.setCancelled(true);
@@ -48,6 +54,7 @@ public class Flint implements Listener {
 
             @Override
             public void run() {
+                if(block==null)return;
                 block.setType(Material.AIR);
             }
         }.runTaskLater(main.getInstance(),10*20);

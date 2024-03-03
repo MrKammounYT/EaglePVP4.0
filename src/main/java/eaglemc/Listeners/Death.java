@@ -179,7 +179,7 @@ public class Death implements Listener {
     }
 
     private void PlayKillStreakEffect(Player p ,UPlayer up){
-        if(up.getSelectedKillStreakEffect() == null) return;
+        if(up.getSelectedKillStreakEffect() == null || up.getSelectedKillStreakEffect().getKillstreakItem().getType() == Material.AIR) return;
         if(killStreaks.contains(p.getUniqueId()))return;
         if(up.getKillStreaks() %5  != 0)return;
         killStreaks.add(p.getUniqueId());

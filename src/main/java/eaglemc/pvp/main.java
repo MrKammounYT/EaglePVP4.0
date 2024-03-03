@@ -20,7 +20,7 @@ public class main extends JavaPlugin {
     private GameManager gameManager;
 
     public static String Prefix;
-    private final String Version = "4.0.8 Beta";
+    private final String Version = "4.0.9 Beta";
 
 
     private PvPCoreAPI pvpcoreAPI;

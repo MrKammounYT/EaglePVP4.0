@@ -25,9 +25,7 @@ public class JumpPad implements Listener {
             Player p = e.getPlayer();
             p.playSound(p.getLocation(), Sound.ENDERDRAGON_WINGS,5.0f,3.0f);
             Vector v = p.getLocation().getDirection().clone().normalize();
-            v.multiply(2);
-            v.setY(0.8D);
-            v.setX(-5);
+            v.multiply(random.nextInt(7));
             p.setVelocity(v);
         }
     }

@@ -1,7 +1,6 @@
 name: pvp
 main: eaglemc.pvp.main
-version: 4.0.8
-depend: [ProtocolLib]
+version: 4.0.9
 commands:
   pvp:
   stats:

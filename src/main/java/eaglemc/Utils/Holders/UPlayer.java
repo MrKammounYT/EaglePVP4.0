@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.refinedev.phoenix.SharedAPI;
 
@@ -83,12 +84,15 @@ public class UPlayer {
 
     private int flint;
 
+    private SavedKit savedKit;
+
 
 
 
 
     public UPlayer(Player p, GameManager manager, UUID uuid, int kills, int deaths, int points, int coins, int exp, int level, ArrayList<Perks> perks, HashMap<Integer, Perks> slots,
-                   ArrayList<Trails> trails, Trails SelectedTrail, ArrayList<DeathCry> DC, DeathCry selectedDC,ArrayList<KillStreakEffect> killStreakEffects,KillStreakEffect selectedKillStreakEffect){
+                   ArrayList<Trails> trails, Trails SelectedTrail, ArrayList<DeathCry> DC, DeathCry selectedDC
+            ,ArrayList<KillStreakEffect> killStreakEffects,KillStreakEffect selectedKillStreakEffect){
         this.kills = kills;
         this.deaths= deaths;
         this.points = points;
@@ -160,6 +164,10 @@ public class UPlayer {
         this.SelectedTrail = trail;
     }
 
+
+    public SavedKit getSavedKit() {
+        return savedKit;
+    }
 
     public int getFlint() {
         return flint;
@@ -310,6 +318,7 @@ public class UPlayer {
         return kit;
     }
     public void setKit(Kit kit) {
+        savedKit = null;
         this.kit = kit;
     }
 
@@ -435,9 +444,14 @@ public class UPlayer {
     }
 
     public void wearKit(Player p){
-        if(kit!= null){
+        if(hasSavedInventory()){
+            savedKit.Wear(p);
+        }
+        else if(kit!= null){
             kit.wear(p);
         }
+        updateFlint(p);
+        p.updateInventory();
     }
 
     public void removePoints(int points){
@@ -452,6 +466,33 @@ public class UPlayer {
 
     public void setlevel(int amount) {
         level = amount;
+    }
+
+    public void saveInventory(Player p){
+        if(kit==null)return;
+        if(!isValidSavedKit(p)){
+            p.sendMessage(main.Prefix + main.color("&cYou can't save Your inventory while having non kit Items"));
+            savedKit = null;
+            return;
+        }
+        p.playSound(p.getLocation(),Sound.GLASS,2.0f,0.5f);
+        savedKit = new SavedKit(kit,p.getInventory().getArmorContents(),p.getInventory().getContents());
+        p.sendMessage(main.Prefix + main.color("&aYour Inventory is Saved !"));
+    }
+    private boolean isValidSavedKit(Player p){
+        int TotalItems=0;
+        for (ItemStack items : p.getInventory().getContents()){
+            if(items == null || items.getType() == Material.AIR)continue;
+            TotalItems+=1;
+        }
+        for (ItemStack items : p.getInventory().getArmorContents()){
+            if(items == null || items.getType() == Material.AIR)continue;
+            TotalItems+=1;
+        }
+        return kit.getItems().size() == (TotalItems);
+    }
+    public boolean hasSavedInventory(){
+        return savedKit !=null;
     }
 
 

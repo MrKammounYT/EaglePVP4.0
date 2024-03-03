@@ -49,6 +49,12 @@ public class User implements CommandExecutor {
 
                 }
             }
+        if(command.getName().equalsIgnoreCase("save")){
+            if(strings.length == 0){
+                gameManager.getPlayerManager().getPlayer(p).saveInventory(p);
+            }
+        }
+
 
             if(command.getName().equalsIgnoreCase("stats")){
                 if(strings.length == 1){
@@ -134,10 +140,7 @@ public class User implements CommandExecutor {
                 p.playSound(p.getLocation(), Sound.ORB_PICKUP, 0.2F,  2.0F + 0.9F);
                 p.sendMessage(main.Prefix  + "§aThere you go!");
         }
-       /* else if(command.getName().equalsIgnoreCase("save")){
-            p.sendMessage(main.Prefix + main.color("&aYour Inventory Has Been Saved!"));
-            gameManager.getSaveManager().saveInventory(p);
-        }*/
+
 
 
 

@@ -16,7 +16,6 @@ public class Uassist {
         return  (damagers.get(player)/20)*100;
     }
     public boolean ShouldGetAssist(Player damager){
-        damager.sendMessage("assist: "+(System.currentTimeMillis() <=  damagesLastHitTime.get(damager)));
         return System.currentTimeMillis() <=  damagesLastHitTime.get(damager);
     }
     public void addDamagers(Player player,int damage){

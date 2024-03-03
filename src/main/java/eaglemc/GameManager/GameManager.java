@@ -29,7 +29,6 @@ public class GameManager {
     private DataBaseManager DBManager;
 
     private PlayerManager playerManager;
-    private SaveManager saveManager;
 
     private EventManager eventManager;
     private KitManager kitManager;
@@ -43,7 +42,6 @@ public class GameManager {
 
     public GameManager(main main){
         configManager = new ConfigManager(main.getConfig());
-        this.saveManager = new SaveManager();
         eventManager = new EventManager(this);
 
         new BukkitRunnable(){
@@ -97,7 +95,7 @@ public class GameManager {
         pm.registerEvents(new TNT(playerManager),main);
         pm.registerEvents(new PlayEffect(playerManager),main);
         pm.registerEvents(new KitSelectionEvent(this),main);
-        pm.registerEvents(new Flint(playerManager),main);
+        pm.registerEvents(new Flint(this),main);
         pm.registerEvents(new SelectionEvent(playerManager),main);
         pm.registerEvents(new PurchaseEvent(playerManager),main);
         pm.registerEvents(new Strength(playerManager),main);
@@ -130,9 +128,6 @@ public class GameManager {
         return leaderBoardUpdate;
     }
 
-    public SaveManager getSaveManager() {
-        return saveManager;
-    }
 
     public QuestManager getQuestManager() {
         return questManager;

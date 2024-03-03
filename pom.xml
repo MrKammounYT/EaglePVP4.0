@@ -20,7 +20,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.3.0</version>
         <configuration>
-          <outputDirectory>C:\Users\LENOVO\Desktop\Ahmed</outputDirectory>
+          <outputDirectory>C:\Users\LENOVO\Desktop</outputDirectory>
           <finalName>pvp</finalName>
         </configuration>
       </plugin>

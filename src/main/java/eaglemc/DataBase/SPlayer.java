@@ -65,6 +65,25 @@ public class SPlayer {
     }
 
 
+    public boolean HaveSavedKit(UUID uuid){
+         boolean HasSavedInventory = false;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT HasSavedInventory FROM PVP WHERE UUID = ?");
+            ps.setString(1,uuid.toString());
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                HasSavedInventory = rs.getInt("HasSavedInventory") == 1;
+            }
+            ps.close();
+            rs.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return  HasSavedInventory;
+    }
+
+
+
 
     public void setSelectedTrail(String uuid,int TrailID){
         try {

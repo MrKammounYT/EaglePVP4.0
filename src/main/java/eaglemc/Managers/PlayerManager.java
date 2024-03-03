@@ -158,7 +158,13 @@ public class PlayerManager {
     }
 
     public UPlayer getPlayer(Player p){
-        return players.get(p.getUniqueId());
+        //add a condition to check if the player is a player
+        if(isPlayer(p)) {
+            return players.get(p.getUniqueId());
+        }
+        p.kickPlayer("§cPlease rejoin again");
+        removePlayer(p);
+        return null;
     }
 
     public void removePlayer(Player p){

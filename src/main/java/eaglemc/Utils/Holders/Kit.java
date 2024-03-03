@@ -1,6 +1,5 @@
 package eaglemc.Utils.Holders;
 
-import eaglemc.Managers.SaveManager;
 import eaglemc.pvp.main;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,7 +24,10 @@ public class Kit {
     private final boolean buyable;
 
     private final int price;
-    SaveManager saveManager = main.getInstance().getGameManager().getSaveManager();
+
+
+    private ArrayList<ItemStack> armor = new ArrayList<>();
+    private ArrayList<ItemStack> contents = new ArrayList<>();
 
 
     public Kit(String Permission,HashMap<Integer,ItemStack> items,String displayName,int slot,Material icon,boolean buyable,int price) {
@@ -36,10 +38,31 @@ public class Kit {
         this.icon = icon;
         this.buyable = buyable;
         this.price = price;
+        loadKits();
     }
     public String getPermission() {   return Permission;
     }
 
+
+    public ArrayList<ItemStack> getArmor() {
+        return armor;
+    }
+
+    public ArrayList<ItemStack> getContents() {
+        return contents;
+    }
+
+    private void loadKits(){
+        for(Map.Entry<Integer,ItemStack> map : items.entrySet()){
+            int slot = map.getKey();
+            if(36<=slot && slot <=39){
+                armor.add(map.getValue());
+            }
+            else {
+                contents.add(map.getValue());
+            }
+        }
+    }
     public int getPrice() {
         return price;
     }
@@ -66,6 +89,8 @@ public class Kit {
         i.addAll(items.values());
         return i;
     }
+
+
 
 
     public void wear(Player p){
